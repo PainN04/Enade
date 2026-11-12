@@ -652,3 +652,5 @@ section.view:not([hidden]){animation:rise 260ms var(--ease) backwards}
 .padlist label{display:flex;gap:10px;align-items:flex-start;cursor:pointer}
 .padlist input{margin-top:5px;flex:none}
 .dh{margin:4px 0 6px}
+.qfig{margin:14px 0;color:var(--ink);overflow-x:auto}.qfig svg{width:100%;max-width:560px;height:auto;display:block;margin:0 auto}.qfign{font-size:.85em;opacity:.75;margin:-6px 0 10px}
+.qfig.wide svg{min-width:540px}@media(max-width:600px){.qfig.wide::after{content:"← deslize para ver a figura inteira →";display:block;text-align:center;font-size:.75em;opacity:.6}}

@@ -10,7 +10,7 @@ const shell = src('shell.html')
   .replace('<!--REDES-->', src('conteudo/redes.html'))
   .replace('<!--C-->', src('conteudo/c.html'))
   .replace('<!--OUTROS-->', src('conteudo/outros.html') + '\n' + src('conteudo/temas-gerais.html'));
-const js = src('questoes.js') + '\n' + src('cartoes.js') + '\n' + src('questoes-gerais.js') + '\n' + src('questoes-provas.js') + '\n' + src('questoes-fg.js') + '\n' + src('explicacoes.js') + '\n' + src('discursivas.js') + '\n' + src('app.js');
+const js = src('questoes.js') + '\n' + src('cartoes.js') + '\n' + src('questoes-gerais.js') + '\n' + src('questoes-provas.js') + '\n' + src('questoes-fg.js') + '\n' + src('questoes-fig.js') + '\n' + src('explicacoes.js') + '\n' + src('discursivas.js') + '\n' + src('app.js');
 let html = src('head.html') + src('style.css') + '</style>\n</head>\n<body>\n' + shell +
   '<script>\n' + js + '</script>\n</body>\n</html>\n';
 
