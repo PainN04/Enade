@@ -582,3 +582,35 @@ section.view.wrap,#v-praticar.quizon{max-width:1080px}
 .guides{grid-template-columns:repeat(4,minmax(0,1fr))}
 #v-ler .reader p,#v-ler .reader li,#v-ler .reader ul,#v-ler .reader ol,#v-ler .note{max-width:80ch}
 }
+
+/* v13: animações leves (desligam com prefers-reduced-motion, regra lá em cima) */
+button,.btnlink,.qc,.tile,.go-card,.guide,.mbox{transition:color var(--dur) var(--ease),background-color var(--dur) var(--ease),border-color var(--dur) var(--ease),box-shadow var(--dur) var(--ease),filter var(--dur) var(--ease),opacity var(--dur) var(--ease),transform 140ms var(--ease)}
+@media (hover:hover){
+button:hover:not(:disabled),.qc:hover:not(:disabled),.guide:hover{transform:translateY(-1px)}
+button.primary:hover:not(:disabled){box-shadow:0 2px 0 rgba(0,0,0,.04),0 8px 22px color-mix(in srgb,var(--primary) 38%,transparent)}
+.qc:hover:not(:disabled),.guide:hover{box-shadow:var(--shadow-lg)}
+.opt:hover:not(.right):not(.wrong){transform:translateX(3px)}
+.qnav .nums button:hover:not(:disabled){transform:translateY(-2px) scale(1.06)}
+}
+button:active:not(:disabled),.qc:active:not(:disabled),.guide:active{transform:scale(.97);filter:none}
+.opt{transition:background-color var(--dur) var(--ease),border-color var(--dur) var(--ease),box-shadow var(--dur) var(--ease),transform 140ms var(--ease)}
+.opt:active{transform:scale(.99)}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+@keyframes pop{0%{transform:scale(.7)}60%{transform:scale(1.18)}100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:none}20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
+@keyframes glow{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--ok) 45%,transparent)}100%{box-shadow:0 0 0 12px transparent}}
+@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+section.view:not([hidden]){animation:rise 260ms var(--ease) backwards}
+.qcard:not([hidden]){animation:rise 240ms var(--ease) backwards}
+.opt input:checked ~ .bub{animation:pop 260ms var(--ease)}
+.graded .opt.right{animation:glow 650ms var(--ease)}
+.graded .opt.wrong{animation:shake 380ms var(--ease)}
+.fb{animation:rise 300ms var(--ease) backwards}
+.result{animation:rise 320ms var(--ease) backwards}
+.result .score .big{display:inline-block;animation:pop 420ms var(--ease) 120ms backwards}
+.qnav .nums button.on{animation:pop 240ms var(--ease)}
+.meter i,.pbar i{transform-origin:left;animation:grow 600ms var(--ease) backwards}
+.welcome,.today,.panel,.tlist,ul.upnext{animation:rise 300ms var(--ease) backwards}
+.trow2,ul.upnext li,.drow{transition:background-color var(--dur) var(--ease)}
+@media (hover:hover){.trow2:hover,.drow:hover{background:color-mix(in srgb,var(--sunk) 55%,transparent)}}
