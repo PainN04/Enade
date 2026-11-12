@@ -9,7 +9,7 @@ const NAMES={'r-camadas':'Camadas e protocolos','r-tcp':'TCP x UDP','r-portas':'
 'c-ptr':'Ponteiros e parâmetros','c-vet':'Vetores','c-str':'Strings e char','c-op':'Operadores','c-rec':'Recursão','c-static':'Variável static','c-lacos':'Laços e switch','c-conc':'Threads e concorrência',
 'a-arq':'Arquitetura e circuitos','a-alg':'Algoritmos e complexidade','a-ed':'Estruturas de dados','a-grafo':'Grafos','a-teo':'Teoria da computação e compiladores','a-so':'Sistemas operacionais','a-bd':'Banco de dados','a-es':'Engenharia de software e IHC','a-log':'Lógica e matemática discreta','a-ia':'Inteligência artificial','a-seg':'Segurança e nuvem'};
 const TOPICS=Object.keys(NAMES);
-const AREA={'a-arq':'Hardware','a-alg':'Algoritmos','a-ed':'Algoritmos','a-grafo':'Algoritmos','a-teo':'Fundamentos','a-log':'Fundamentos','a-so':'Sistemas','a-bd':'Sistemas','a-seg':'Sistemas','a-es':'Software','a-ia':'Inteligência artificial'};
+const AREA={'a-arq':'Hardware','a-alg':'Algoritmos','a-ed':'Algoritmos','a-grafo':'Algoritmos','a-teo':'Fundamentos','a-log':'Fundamentos','a-so':'Sistemas','a-bd':'Sistemas','a-seg':'Sistemas','a-es':'Software','a-ia':'Inteligência artificial','fg':'Formação geral'};
 const AREAS=['Algoritmos','Programação em C','Hardware','Redes','Sistemas','Fundamentos','Software','Inteligência artificial'];
 const area=k=>k==='prova'?'Sobre a prova':AREA[k]||(k[0]==='r'?'Redes':'Programação em C');
 const DIAG=['a-alg','a-ed','a-grafo','a-arq','a-teo','a-log','a-so','a-bd','a-es','a-ia','a-seg','r-tcp','r-ip','c-ptr','c-vet','c-rec'];
@@ -193,7 +193,7 @@ return '<div class="drow"><a class="nm" href="'+(CHUNK[k]?'#ler/'+k:'#estudar')+
 function renderMap(){const el=$('#mapBox');
 if(!hasData()){el.innerHTML='<div class="panel"><p class="empty">Depois do diagnóstico aparece aqui como você está em cada tema.</p><div class="btns"><button class="primary" data-act="diag">Fazer o diagnóstico</button></div></div>';return}
 el.innerHTML='<div class="panel"><div class="dmap">'+mapRows()+'</div><p class="empty">Bom: 75% ou mais de acerto. Revisar: de 40% a 74%. Estudar: abaixo de 40%.</p><div class="btns"><button class="ghost" data-act="diag">Refazer o diagnóstico</button></div></div>'}
-function temaName(t){return ({tudo:'Todos os temas',redes:'Redes',c:'Programação em C',erros:'Meus erros',diag:'Diagnóstico',foco:'Treino focado',prova:'Simulado'})[t]||NAMES[t]||t}
+function temaName(t){if(/^full\d{4}$/.test(t))return 'Prova completa de '+t.slice(4);return ({tudo:'Todos os temas',redes:'Redes',c:'Programação em C',erros:'Meus erros',diag:'Diagnóstico',foco:'Treino focado',prova:'Simulado'})[t]||NAMES[t]||t}
 function renderHist(){const h=prof().hist,el=$('#hist');
 if(!h.length){el.innerHTML='<p class="empty">Nenhum treino ainda.</p>';return}
 el.innerHTML=h.slice(0,6).map(r=>{const p=Math.round(100*r.ok/r.n);const d=new Date(r.when);
@@ -218,9 +218,18 @@ const qc=(a,t,d,s,off)=>'<button class="qc" type="button" data-act="'+a+'"'+(off
 $('#quick').innerHTML=qc('prova','Simulado com tempo','10 questões reais de provas anteriores, de todos os temas, corrigidas só no fim.','Cerca de 25 min')+
 qc('erros','Refazer meus erros',e?'As questões que você errou. Cada uma sai da lista depois de dois acertos seguidos.':'Quando você errar uma questão, ela fica guardada aqui.',e+(e===1?' questão':' questões'),!e)+
 qc('cards','Cartões de memorização','Perguntas rápidas para decorar fórmulas, complexidades, portas e pegadinhas.',k+' de '+CARDS.length+' que você já sabe');
+const anos=[2021,2017,2014,2011,2008].filter(a=>BANK.some(q=>q.src&&q.src.indexOf('ENADE '+a)===0));
+$('#fullBox').innerHTML='<div class="panel fullbox"><div><h2>Prova completa, como no dia</h2><p>As questões objetivas de uma prova de verdade, na ordem original, com <b>4 horas</b> de cronômetro regressivo. Só no final você vê o gabarito e as explicações.</p></div><div class="fullrow"><label class="fld" for="anoSel"><span>Ano da prova</span><select id="anoSel">'+anos.map(a=>'<option value="'+a+'">'+a+' ('+fullPool(a).length+' questões)</option>').join('')+'</select></label><button class="primary" type="button" id="btnFull">Começar a prova</button></div></div>';
+$('#btnFull').onclick=()=>go(()=>startFull(+$('#anoSel').value));
+const eb=errIds();$('#errRev').innerHTML=eb.length?'<details class="custom errrev"><summary>Ver a lista dos meus erros ('+eb.length+')</summary><div class="rvlist">'+eb.map(i=>reviewItem(BANK[i])).join('')+'</div></details>':'';
 const sel=$('#temaSel');if(!sel.options.length)sel.innerHTML='<option value="tudo">Todos os temas</option>'+AREAS.map(ar=>'<optgroup label="'+ar+'">'+TOPICS.filter(x=>area(x)===ar).map(x=>'<option value="'+x+'">'+NAMES[x]+'</option>').join('')+'</optgroup>').join('');
 const re=BANK.filter(q=>q.src).length,seen=BANK.filter(q=>P.seen[q.id]).length;
 $('#bankInfo').textContent=BANK.length+' questões no banco, '+re+' delas de provas anteriores. Você já respondeu '+seen+'.'}
+function qNum(q){const m=/Questão (\d+)/.exec(q.src||'');return m?+m[1]:0}
+function fullPool(a){return BANK.filter(q=>q.src&&q.src.indexOf('ENADE '+a)===0).sort((x,y)=>qNum(x)-qNum(y))}
+function startFull(a){const pool=fullPool(a);if(!pool.length)return;startQuiz({ids:pool.map(q=>q.id),label:'full'+a,keep:true,mode:'prova',limit:4*3600000})}
+function reviewItem(q){const txt=q.q.replace(/<[^>]+>/g,'').slice(0,120);
+return '<details class="rv"><summary><span class="chip">'+esc(NAMES[q.s]||area(q.s))+'</span>'+(q.src?'<span class="chip real">'+esc(q.src)+'</span>':'')+'<span class="rvt">'+esc(txt)+(q.q.length>120?'…':'')+'</span></summary><div class="rvbody"><div class="qtext">'+q.q+'</div>'+(q.code?'<pre><code>'+esc(q.code)+'</code></pre>':'')+(q.items?'<ol class="items">'+q.items.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ol>':'')+(q.stem?'<div class="qtext">'+q.stem+'</div>':'')+'<ul class="rvopts">'+q.o.map((t,i)=>'<li class="'+(i===q.a?'right':'')+'"><b>'+LETTERS[i]+')</b> '+esc(t)+(i===q.a?' <em>(resposta certa)</em>':'')+'</li>').join('')+'</ul><div class="fb ok"><p class="fbl"><span>Por quê</span></p><p>'+q.e+'</p></div></div></details>'}
 function go(fn){resetPractice();if(location.hash!=='#praticar')location.hash='praticar';fn()}
 function startDiag(){const ids=DIAG.map(st=>shuffle(BANK.filter(q=>q.s===st&&!q.src))[0].id);startQuiz({ids,label:'diag',keep:true,mode:'prova'})}
 function startErrors(){const ids=errIds();if(ids.length)startQuiz({ids:shuffle(ids).slice(0,15),label:'erros',mode:'treino'})}
@@ -238,7 +247,7 @@ pool=BANK.filter(q=>(tema==='tudo'||q.s===tema)&&(fonte==='todas'||(fonte==='rea
 pool=tema==='tudo'?mixed(pool,n):shuffle(pool).slice(0,n)}
 if(!pool.length){$('#bankInfo').textContent='Não há questões com essa combinação. Mude o tema ou a origem.';return}
 mode=mode||'treino';
-cur={qs:pool.map(q=>({q,perm:q.fixed?[0,1,2,3,4]:shuffle([0,1,2,3,4]),pick:null,graded:false,right:false})),tema:label,mode,i:0,done:false,t0:Date.now()};
+cur={qs:pool.map(q=>({q,perm:q.fixed?[0,1,2,3,4]:shuffle([0,1,2,3,4]),pick:null,graded:false,right:false})),tema:label,mode,i:0,done:false,t0:Date.now(),limit:o.limit||0};
 $('#setup').hidden=true;$('#cards').hidden=true;$('#result').hidden=true;$('#result').innerHTML='';
 renderQuiz();$('#v-praticar').classList.add('quizon');$('#qnav').hidden=false;$('#bar').hidden=false;updBar();clearInterval(tick);tick=setInterval(updTimer,1000);updTimer();window.scrollTo(0,0)}
 function renderQuiz(){
@@ -255,7 +264,10 @@ $$('#quiz input[type=radio]').forEach(inp=>inp.addEventListener('change',e=>{con
 function goQ(k){if(!cur||cur.done||k<0||k>=cur.qs.length||k===cur.i)return;if(cur.mode==='treino'&&!cur.qs[k].graded&&k!==cur.qs.findIndex(x=>!x.graded))return;
 document.getElementById('q'+cur.i).hidden=true;cur.i=k;document.getElementById('q'+k).hidden=false;updBar();const t=$('#qnav').getBoundingClientRect().top;if(t<0||t>innerHeight/2)window.scrollTo(0,0)}
 function fmtT(ms){const s=Math.floor(ms/1000);return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
-function updTimer(){if(cur&&!cur.done)$('#timer').textContent=fmtT(Date.now()-cur.t0)}
+function updTimer(){if(!cur||cur.done)return;const el=$('#timer');
+if(cur.limit){const left=cur.limit-(Date.now()-cur.t0);if(left<=0){el.textContent='00:00:00';clearInterval(tick);alert('O tempo acabou. Vamos corrigir a prova.');finish();return}
+const s=Math.floor(left/1000);el.textContent=String(Math.floor(s/3600)).padStart(2,'0')+':'+String(Math.floor(s/60)%60).padStart(2,'0')+':'+String(s%60).padStart(2,'0');el.classList.toggle('low',left<10*60000);el.setAttribute('aria-label','Tempo restante')}
+else{el.classList.remove('low');el.setAttribute('aria-label','Tempo decorrido');el.textContent=fmtT(Date.now()-cur.t0)}}
 function updBar(){const n=cur.qs.length,g=$('#btnGrade'),c=$('#btnCancel'),pv=$('#btnPrev'),nx=$('#btnNext'),it=cur.qs[cur.i];
 $$('#qnums button').forEach((b,k)=>{const x=cur.qs[k];b.className=(k===cur.i?'on ':'')+(x.graded?(x.right?'ok':'no'):(x.pick!==null?'done':''));b.disabled=cur.mode==='treino'&&!x.graded&&k!==cur.qs.findIndex(y=>!y.graded);b.setAttribute('aria-current',k===cur.i?'true':'false')});
 if(cur.mode==='treino'){const ok=cur.qs.filter(x=>x.right).length,last=cur.qs.findIndex(x=>!x.graded);

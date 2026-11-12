@@ -626,3 +626,19 @@ section.view:not([hidden]){animation:rise 260ms var(--ease) backwards}
 .explain .lbl{color:var(--accent)}
 .how .lbl{color:var(--orange-ink)}
 .worked code,.explain code{font-size:.92em}
+
+/* v16: prova completa e lista de erros */
+.fullbox{display:flex!important;flex-direction:column;align-items:flex-start;gap:14px}.fullbox>div{width:100%;max-width:none;margin:0;padding:0}
+.fullbox h2{margin:0 0 4px;font-size:18px}
+.fullbox p{margin:0;max-width:56ch;color:var(--muted)}
+.fullrow{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap}
+.timer.low{background:var(--bad-soft);color:var(--bad)}
+.errrev{margin-top:4px}
+.rvlist{display:grid;gap:8px;margin-top:12px}
+.rv{border:1px solid var(--line);border-radius:12px;background:var(--sheet)}
+.rv>summary{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 14px;cursor:pointer}
+.rv .rvt{flex:1 1 260px;min-width:0;color:var(--ink)}
+.rvbody{padding:4px 16px 16px;display:grid;gap:10px}
+.rvopts{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.rvopts li{padding:8px 12px;border-radius:10px;background:var(--sunk)}
+.rvopts li.right{background:var(--ok-soft);color:var(--ok)}
