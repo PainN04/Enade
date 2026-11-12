@@ -215,7 +215,7 @@ else if(w.length)m=['Treino focado em você','10 questões, com mais peso em: '+
 else m=['Treino geral','10 questões de todos os temas, com explicação logo depois de cada resposta.','Começar treino','foco'];
 $('#mainPrac').innerHTML='<div class="today"><div class="eyebrow">Recomendado</div><h2>'+m[0]+'</h2><p class="today-t">'+m[1]+'</p><div class="btns"><button class="primary big" data-act="'+m[3]+'">'+m[2]+'</button></div></div>';
 const qc=(a,t,d,s,off)=>'<button class="qc" type="button" data-act="'+a+'"'+(off?' disabled':'')+'><b>'+t+'</b><span>'+d+'</span><small>'+s+'</small></button>';
-$('#quick').innerHTML=qc('prova','Simulado com tempo','10 questões de todos os temas, corrigidas só no fim, como na prova.','Cerca de 25 min')+
+$('#quick').innerHTML=qc('prova','Simulado com tempo','10 questões reais de provas anteriores, de todos os temas, corrigidas só no fim.','Cerca de 25 min')+
 qc('erros','Refazer meus erros',e?'As questões que você errou. Cada uma sai da lista depois de dois acertos seguidos.':'Quando você errar uma questão, ela fica guardada aqui.',e+(e===1?' questão':' questões'),!e)+
 qc('cards','Cartões de memorização','Perguntas rápidas para decorar fórmulas, complexidades, portas e pegadinhas.',k+' de '+CARDS.length+' que você já sabe');
 const sel=$('#temaSel');if(!sel.options.length)sel.innerHTML='<option value="tudo">Todos os temas</option>'+AREAS.map(ar=>'<optgroup label="'+ar+'">'+TOPICS.filter(x=>area(x)===ar).map(x=>'<option value="'+x+'">'+NAMES[x]+'</option>').join('')+'</optgroup>').join('');
@@ -225,13 +225,14 @@ function go(fn){resetPractice();if(location.hash!=='#praticar')location.hash='pr
 function startDiag(){const ids=DIAG.map(st=>shuffle(BANK.filter(q=>q.s===st&&!q.src))[0].id);startQuiz({ids,label:'diag',keep:true,mode:'prova'})}
 function startErrors(){const ids=errIds();if(ids.length)startQuiz({ids:shuffle(ids).slice(0,15),label:'erros',mode:'treino'})}
 function startTopic(st){const ids=shuffle(BANK.filter(q=>q.s===st)).slice(0,6).map(q=>q.id);startQuiz({ids,label:st,mode:'treino'})}
+function pickSpread(list,n,max){const c={},out=[];list.forEach(q=>{if(out.length<n&&(c[q.s]||0)<max){c[q.s]=(c[q.s]||0)+1;out.push(q)}});return shuffle(out)}
 function mixed(pool,n){const g={};shuffle(pool).forEach(q=>(g[q.s]=g[q.s]||[]).push(q));const ks=shuffle(Object.keys(g)),out=[];while(out.length<n&&ks.some(k=>g[k].length))ks.forEach(k=>{if(out.length<n&&g[k].length)out.push(g[k].pop())});return shuffle(out)}
 function startQuiz(o){o=o||{};let pool,label=o.label;let mode=o.mode;
 if(o.ids){pool=o.ids.map(i=>BANK[i]);if(!o.keep)pool=shuffle(pool)}
 else if(o.foco){label=hasData()&&weakTopics().length?'foco':'tudo';mode='treino';const P=prof();
 const w=q=>{const a=acc(q.s),seen=P.stats[q.s]?P.stats[q.s][1]:0;return (a===null?.6:1-a)+(seen<3?.15:0)+(q.id in P.err?.2:0)+Math.random()*.3};
-pool=hasData()?shuffle(BANK.map(q=>[w(q),q]).sort((a,b)=>b[0]-a[0]).slice(0,10).map(x=>x[1])):mixed(BANK,10)}
-else if(o.prova){label='prova';mode='prova';pool=mixed(BANK,10)}
+pool=hasData()?pickSpread(BANK.map(q=>[w(q),q]).sort((a,b)=>b[0]-a[0]).map(x=>x[1]),10,2):mixed(BANK,10)}
+else if(o.prova){label='prova';mode='prova';pool=mixed(BANK.filter(q=>q.src),10)}
 else{const tema=$('#temaSel').value,fonte=$('#fonteSel').value,qtd=+$('#qtdSel').value;mode=$('#modoSel').value;label=tema;
 pool=BANK.filter(q=>(tema==='tudo'||q.s===tema)&&(fonte==='todas'||(fonte==='real')===!!q.src));const n=Math.min(qtd,pool.length);
 pool=tema==='tudo'?mixed(pool,n):shuffle(pool).slice(0,n)}

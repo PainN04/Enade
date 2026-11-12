@@ -7,6 +7,7 @@ Site de estudo para o ENADE de Ciência da Computação: resumos por tema, diagn
 - `src/head.html`, `src/style.css`, `src/shell.html`: cabeçalho, estilo e telas.
 - `src/conteudo/`: resumos dos temas (redes, C, assuntos gerais e os demais temas da prova).
 - `src/questoes.js`, `src/questoes-gerais.js`, `src/cartoes.js`: banco de questões e cartões de revisão.
+- `src/questoes-provas.js`: questões reais das provas de 2008 a 2021, de todos os temas, com o gabarito oficial.
 - `src/app.js`: navegação, diagnóstico, treinos e plano.
 - `api/perfil.js`: login por nome e senha e progresso salvo no Vercel Blob.
 - `build.js`: junta tudo em `public/index.html` e gera os ícones.
