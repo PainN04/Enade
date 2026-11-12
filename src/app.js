@@ -240,23 +240,30 @@ if(!pool.length){$('#bankInfo').textContent='Não há questões com essa combina
 mode=mode||'treino';
 cur={qs:pool.map(q=>({q,perm:q.fixed?[0,1,2,3,4]:shuffle([0,1,2,3,4]),pick:null,graded:false,right:false})),tema:label,mode,i:0,done:false,t0:Date.now()};
 $('#setup').hidden=true;$('#cards').hidden=true;$('#result').hidden=true;$('#result').innerHTML='';
-renderQuiz();$('#bar').hidden=false;updBar();clearInterval(tick);tick=setInterval(updTimer,1000);updTimer();window.scrollTo(0,0)}
-function renderQuiz(){const solo=cur.mode==='treino';
+renderQuiz();$('#v-praticar').classList.add('quizon');$('#qnav').hidden=false;$('#bar').hidden=false;updBar();clearInterval(tick);tick=setInterval(updTimer,1000);updTimer();window.scrollTo(0,0)}
+function renderQuiz(){
 $('#quiz').innerHTML=cur.qs.map((it,k)=>{const q=it.q;
-return '<article class="qcard" id="q'+k+'"'+(solo&&k?' hidden':'')+'><div class="qhead"><span class="qn">Questão '+(k+1)+' de '+cur.qs.length+'</span>'+(cur.tema==='diag'?'':'<span class="chip">'+(NAMES[q.s]||area(q.s))+'</span>')+(q.src?'<span class="chip real">'+q.src+'</span>':'')+'</div>'+
+return '<article class="qcard" id="q'+k+'"'+(k?' hidden':'')+'><div class="qhead"><span class="qn">Questão '+(k+1)+' de '+cur.qs.length+'</span>'+(cur.tema==='diag'?'':'<span class="chip">'+(NAMES[q.s]||area(q.s))+'</span>')+(q.src?'<span class="chip real">'+q.src+'</span>':'')+'</div>'+
 '<div class="qtext">'+q.q+'</div>'+(q.code?'<pre><code>'+esc(q.code)+'</code></pre>':'')+
 (q.items?'<ol class="items">'+q.items.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ol>':'')+(q.stem?'<div class="qtext">'+q.stem+'</div>':'')+
-'<div class="opts" role="radiogroup" aria-label="Alternativas da questão '+(k+1)+'">'+it.perm.map((oi,pos)=>
+'<div class="opts'+(q.o.every(t=>t.length<=70)?' two':'')+'" role="radiogroup" aria-label="Alternativas da questão '+(k+1)+'">'+it.perm.map((oi,pos)=>
 '<label class="opt" data-oi="'+oi+'" for="q'+k+'o'+pos+'"><input type="radio" name="q'+k+'" id="q'+k+'o'+pos+'" value="'+oi+'"><span class="bub">'+LETTERS[pos]+'</span><span class="txt">'+esc(q.o[oi])+'</span></label>').join('')+
 '</div><div class="fbslot"></div></article>'}).join('');
+$('#qnums').innerHTML=cur.qs.map((it,k)=>'<button type="button" data-n="'+k+'" aria-label="Questão '+(k+1)+'">'+(k+1)+'</button>').join('');
+$$('#qnums button').forEach(b=>b.onclick=()=>goQ(+b.dataset.n));
 $$('#quiz input[type=radio]').forEach(inp=>inp.addEventListener('change',e=>{const k=+e.target.name.slice(1);if(cur.qs[k].graded)return;cur.qs[k].pick=+e.target.value;updBar()}))}
+function goQ(k){if(!cur||cur.done||k<0||k>=cur.qs.length||k===cur.i)return;if(cur.mode==='treino'&&!cur.qs[k].graded&&k!==cur.qs.findIndex(x=>!x.graded))return;
+document.getElementById('q'+cur.i).hidden=true;cur.i=k;document.getElementById('q'+k).hidden=false;updBar();const t=$('#qnav').getBoundingClientRect().top;if(t<0||t>innerHeight/2)window.scrollTo(0,0)}
 function fmtT(ms){const s=Math.floor(ms/1000);return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
 function updTimer(){if(cur&&!cur.done)$('#timer').textContent=fmtT(Date.now()-cur.t0)}
-function updBar(){const n=cur.qs.length,g=$('#btnGrade'),c=$('#btnCancel');
-if(cur.mode==='treino'){const it=cur.qs[cur.i],ok=cur.qs.filter(x=>x.right).length,done=cur.qs.filter(x=>x.graded).length;
-$('#progTxt').textContent='Questão '+(cur.i+1)+' de '+n+' · '+ok+(ok===1?' acerto':' acertos');$('#progBar').style.width=(100*done/n)+'%';
-g.textContent=it.graded?(cur.i<n-1?'Próxima':'Ver resultado'):(it.pick===null?'Não sei, ver resposta':'Responder');c.textContent='Encerrar'}
-else{const a=cur.qs.filter(x=>x.pick!==null).length;$('#progTxt').textContent=a+' de '+n+' respondidas';$('#progBar').style.width=(100*a/n)+'%';
+function updBar(){const n=cur.qs.length,g=$('#btnGrade'),c=$('#btnCancel'),pv=$('#btnPrev'),nx=$('#btnNext'),it=cur.qs[cur.i];
+$$('#qnums button').forEach((b,k)=>{const x=cur.qs[k];b.className=(k===cur.i?'on ':'')+(x.graded?(x.right?'ok':'no'):(x.pick!==null?'done':''));b.disabled=cur.mode==='treino'&&!x.graded&&k!==cur.qs.findIndex(y=>!y.graded);b.setAttribute('aria-current',k===cur.i?'true':'false')});
+if(cur.mode==='treino'){const ok=cur.qs.filter(x=>x.right).length,last=cur.qs.findIndex(x=>!x.graded);
+$('#progTxt').textContent=ok+(ok===1?' acerto':' acertos');
+pv.hidden=cur.i===0;nx.hidden=true;
+g.textContent=it.graded?(last<0?'Ver resultado':(last===cur.i+1?'Próxima':'Ir para a questão '+(last+1))):(it.pick===null?'Não sei, ver resposta':'Responder');c.textContent='Encerrar'}
+else{const a=cur.qs.filter(x=>x.pick!==null).length;$('#progTxt').textContent=a+' de '+n+' respondidas';
+pv.hidden=cur.i===0;nx.hidden=cur.i===n-1;
 g.textContent=a<n?'Corrigir ('+(n-a)+' em branco)':'Corrigir';c.textContent='Cancelar'}}
 function gradeCard(k){const it=cur.qs[k],q=it.q,card=document.getElementById('q'+k);it.graded=true;it.right=it.pick===q.a;
 card.classList.add('graded');card.querySelectorAll('input').forEach(i=>i.disabled=true);
@@ -275,14 +282,15 @@ record(q,r)}
 function mainAction(){if(!cur||cur.done)return;
 if(cur.mode==='prova'){finish();return}
 const it=cur.qs[cur.i];
-if(!it.graded){gradeCard(cur.i);save();updBar();const fb=document.querySelector('#q'+cur.i+' .fbslot');if(fb){const r=fb.getBoundingClientRect(),bar=$('#bar'),bt=bar&&!bar.hidden?bar.getBoundingClientRect().top:innerHeight;if(r.top>bt-160||r.bottom>bt)fb.scrollIntoView({block:r.height>bt-120?'start':'end',behavior:'smooth'})};return}
-if(cur.i<cur.qs.length-1){document.getElementById('q'+cur.i).hidden=true;cur.i++;document.getElementById('q'+cur.i).hidden=false;updBar();window.scrollTo(0,0)}
+if(!it.graded){gradeCard(cur.i);save();updBar();const fb=document.querySelector('#q'+cur.i+' .fbslot'),b=$('#bar').getBoundingClientRect();if(fb&&getComputedStyle($('#bar')).position==='sticky'){if(fb.getBoundingClientRect().top>b.top-140)fb.scrollIntoView({block:'start',behavior:'smooth'})}else if(fb&&b.bottom>innerHeight){const ft=fb.getBoundingClientRect().top;if(b.bottom-ft<innerHeight-90)window.scrollBy({top:b.bottom-innerHeight+16,behavior:'smooth'});else fb.scrollIntoView({block:'start',behavior:'smooth'})};return}
+const last=cur.qs.findIndex(x=>!x.graded);
+if(last>=0){goQ(last);window.scrollTo(0,0)}
 else finish()}
 function finish(){clearInterval(tick);const P=prof();
 if(cur.mode==='prova')cur.qs.forEach((it,k)=>{if(!it.graded)gradeCard(k)});
 const list=cur.qs.map((it,k)=>[it,k]).filter(x=>x[0].graded);
 if(!list.length){resetPractice();return}
-cur.done=true;cur.qs.forEach((it,k)=>{document.getElementById('q'+k).hidden=!it.graded});
+cur.done=true;$('#qnav').hidden=true;cur.qs.forEach((it,k)=>{document.getElementById('q'+k).hidden=!it.graded});
 let ok=0;const weak={};
 list.forEach(([it])=>{if(it.right)ok++;else weak[it.q.s]=(weak[it.q.s]||0)+1});
 const n=list.length,p=Math.round(100*ok/n),ms=Date.now()-cur.t0,mins=Math.max(1,Math.round(ms/60000));
@@ -305,17 +313,19 @@ R.innerHTML='<div class="result"><div class="eyebrow">'+esc(temaName(cur.tema))+
 R.querySelectorAll('[data-q]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();scrollToId('q'+a.dataset.q)}));
 const rd=$('#btnRedo');if(rd)rd.onclick=()=>go(()=>startQuiz({ids:wrongIds,label:'erros',mode:'treino'}));
 $('#btnNew').onclick=()=>{resetPractice();window.scrollTo(0,0)};$('#bar').hidden=true;window.scrollTo(0,0)}
-function resetPractice(){clearInterval(tick);cur=null;fc=null;$('#quiz').innerHTML='';$('#result').hidden=true;$('#result').innerHTML='';$('#bar').hidden=true;$('#cards').hidden=true;$('#cards').innerHTML='';$('#setup').hidden=false;renderPractice()}
+function resetPractice(){clearInterval(tick);cur=null;fc=null;$('#quiz').innerHTML='';$('#result').hidden=true;$('#result').innerHTML='';$('#bar').hidden=true;$('#qnav').hidden=true;$('#v-praticar').classList.remove('quizon');$('#cards').hidden=true;$('#cards').innerHTML='';$('#setup').hidden=false;renderPractice()}
 function cancelQuiz(){if(!cur)return;if(cur.mode==='prova'&&!cur.done&&cur.qs.some(x=>x.pick!==null)&&!confirm('Sair sem corrigir? Suas respostas serão perdidas.'))return;if(cur.mode==='treino'&&!cur.done&&cur.qs.some(x=>x.graded))finish();else{resetPractice();window.scrollTo(0,0)}}
-document.addEventListener('keydown',e=>{if(!cur||cur.done||cur.mode!=='treino'||e.ctrlKey||e.metaKey||e.altKey||$('#v-praticar').hidden)return;
+document.addEventListener('keydown',e=>{if(!cur||cur.done||e.ctrlKey||e.metaKey||e.altKey||$('#v-praticar').hidden)return;
 const k=e.key.toLowerCase(),pos='abcde'.indexOf(k)>=0?'abcde'.indexOf(k):'12345'.indexOf(k);
-if(pos>=0&&k.length===1&&!cur.qs[cur.i].graded){const inp=document.getElementById('q'+cur.i+'o'+pos);if(inp){inp.checked=true;inp.dispatchEvent(new Event('change',{bubbles:true}))}}
-else if(e.key==='Enter'&&e.target.tagName!=='BUTTON'&&e.target.tagName!=='A'){e.preventDefault();mainAction()}});
+if(/^(SELECT|TEXTAREA)$/.test(e.target.tagName)||(e.target.tagName==='INPUT'&&e.target.type!=='radio'))return;
+if(e.key==='ArrowRight'&&cur.mode==='prova'){e.preventDefault();goQ(cur.i+1)}else if(e.key==='ArrowLeft'&&cur.mode==='prova'){e.preventDefault();goQ(cur.i-1)}
+else if(pos>=0&&k.length===1&&!cur.qs[cur.i].graded){const inp=document.getElementById('q'+cur.i+'o'+pos);if(inp){inp.checked=true;inp.dispatchEvent(new Event('change',{bubbles:true}))}}
+else if(e.key==='Enter'&&e.target.tagName!=='BUTTON'&&e.target.tagName!=='A'){e.preventDefault();if(cur.mode==='prova'){if(cur.i<cur.qs.length-1)goQ(cur.i+1)}else mainAction()}});
 
 /* ---------- cartões de memorização ---------- */
 function startCards(only){const P=prof();const idx=only||CARDS.map((c,i)=>i);
 const list=only?shuffle(idx):shuffle(idx.filter(i=>!P.fc[i])).concat(shuffle(idx.filter(i=>P.fc[i]))).slice(0,12);
-fc={list,i:0,ok:0,miss:[],shown:false};$('#setup').hidden=true;$('#quiz').innerHTML='';$('#result').hidden=true;$('#bar').hidden=true;$('#cards').hidden=false;renderCard();window.scrollTo(0,0)}
+fc={list,i:0,ok:0,miss:[],shown:false};$('#setup').hidden=true;$('#quiz').innerHTML='';$('#result').hidden=true;$('#bar').hidden=true;$('#qnav').hidden=true;$('#v-praticar').classList.remove('quizon');$('#cards').hidden=false;renderCard();window.scrollTo(0,0)}
 function renderCard(){const el=$('#cards');
 if(fc.i>=fc.list.length){const n=fc.list.length,k=CARDS.filter((c,i)=>prof().fc[i]).length;
 el.innerHTML='<div class="result"><div class="eyebrow">Cartões de memorização</div><div class="score"><span class="big">'+fc.ok+'/'+n+'</span><span class="of">você já sabia</span></div><p class="verdict">'+(fc.miss.length?'Os cartões que você não sabia voltam primeiro na próxima rodada.':'Rodada perfeita.')+' No total, você já sabe '+k+' de '+CARDS.length+'.</p><div class="btns">'+(fc.miss.length?'<button class="primary" id="fcRedo">Repetir os que errei ('+fc.miss.length+')</button>':'')+'<button id="fcMore">Outra rodada</button><button class="ghost" id="fcOut">Voltar</button></div></div>';
@@ -360,7 +370,7 @@ const j=t.closest('[data-jump]');if(j&&CHUNK[j.dataset.jump]){e.preventDefault()
 $('#nameForm').addEventListener('submit',e=>{e.preventDefault();login($('#nomeIn').value,$('#senhaIn').value)});
 $('#loginDlg').addEventListener('click',e=>{if(e.target===e.currentTarget)closeLogin()});
 $('#btnStart').onclick=()=>startQuiz();
-$('#btnGrade').onclick=mainAction;
+$('#btnGrade').onclick=mainAction;$('#btnPrev').onclick=()=>goQ(cur.i-1);$('#btnNext').onclick=()=>goQ(cur.i+1);
 $('#btnCancel').onclick=cancelQuiz;
 decorate();
 show();

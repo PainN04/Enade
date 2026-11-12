@@ -529,3 +529,34 @@ details.allplan[open] summary{margin-bottom:8px}
 .graded .opt.wrong,.graded .opt.wrong:has(input:checked){background:var(--bad-soft);border-color:var(--bad)}
 .graded .opt.wrong input:checked ~ .bub{border-color:var(--bad);background:var(--bad);color:var(--sheet)}
 .fbslot{scroll-margin-bottom:170px;scroll-margin-top:90px}
+
+/* v10: uma questão por vez, com números para navegar */
+#v-praticar.quizon{max-width:1000px}
+.qnav{display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap;background:var(--sheet);border:1px solid var(--line);border-radius:var(--r);padding:12px 16px;box-shadow:var(--shadow)}
+.qnav[hidden],.qfoot[hidden],.qfoot [hidden]{display:none}
+.qnav .nums{display:flex;gap:6px;flex-wrap:wrap;flex:1;min-width:0}
+.qnav .nums button{width:34px;height:34px;min-height:0;padding:0;border-radius:9px;display:grid;place-items:center;font:600 13px var(--f-mono);border:1.5px solid var(--line);background:var(--sunk);color:var(--muted);box-shadow:none;cursor:pointer}
+.qnav .nums button:hover:not(:disabled){border-color:var(--edge);color:var(--ink)}
+.qnav .nums button:disabled{opacity:.45;cursor:default}
+.qnav .nums button.done{background:var(--accent-soft);color:var(--accent);border-color:transparent}
+.qnav .nums button.ok{background:var(--ok-soft);color:var(--ok);border-color:transparent}
+.qnav .nums button.no{background:var(--bad-soft);color:var(--bad);border-color:transparent}
+.qnav .nums button.on{border-color:var(--brand);color:var(--ink);background:var(--sheet);box-shadow:0 0 0 2px color-mix(in srgb,var(--brand) 25%,transparent)}
+.qnav .nprog{font-size:13.5px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+#v-praticar.quizon .qcard{padding:22px 28px}
+#v-praticar.quizon .qtext{max-width:none}
+.opts.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+#v-praticar.quizon .opt{min-height:42px;padding:10px 12px}
+.qfoot{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.qfoot .sp{flex:1}
+@media (max-width:640px){
+#v-praticar.quizon .qcard{padding:18px}
+.opts.two{grid-template-columns:1fr}
+.qnav{padding:10px 12px}
+.qnav .nums{flex-basis:100%;gap:5px}
+.qnav .nums button{width:32px;height:32px}
+.qfoot{position:sticky;bottom:0;z-index:4;background:color-mix(in srgb,var(--paper,var(--sheet)) 92%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);margin-inline:-16px;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.qfoot .sp{display:none}
+.qfoot button{width:100%}
+.qfoot #btnGrade{grid-column:1/-1;order:-1}
+}
