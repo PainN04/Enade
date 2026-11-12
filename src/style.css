@@ -614,3 +614,15 @@ section.view:not([hidden]){animation:rise 260ms var(--ease) backwards}
 .welcome,.today,.panel,.tlist,ul.upnext{animation:rise 300ms var(--ease) backwards}
 .trow2,ul.upnext li,.drow{transition:background-color var(--dur) var(--ease)}
 @media (hover:hover){.trow2:hover,.drow:hover{background:color-mix(in srgb,var(--sunk) 55%,transparent)}}
+
+/* v14: explicações dos resumos (Entenda / Exemplo passo a passo / Como cai) */
+.explain,.worked,.how{border-radius:var(--r);padding:18px 22px;display:flex;flex-direction:column;gap:10px}
+.explain p,.worked p,.how p,.worked li{max-width:78ch}
+.explain{background:var(--sheet);border:1px solid var(--line);border-left:5px solid var(--accent,#4B9DB8);box-shadow:var(--shadow)}
+.worked{background:var(--sunk);border:1px solid var(--line)}
+.worked ol{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:8px}
+.how{background:var(--orange-soft);border:1px solid color-mix(in srgb,var(--brand) 25%,transparent)}
+.lbl{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.explain .lbl{color:var(--accent)}
+.how .lbl{color:var(--orange-ink)}
+.worked code,.explain code{font-size:.92em}

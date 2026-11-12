@@ -6,6 +6,7 @@
 <a href="#redes" data-jump="r-camadas">Camadas</a><a href="#redes" data-jump="r-tcp">TCP x UDP</a><a href="#redes" data-jump="r-portas">Portas</a><a href="#redes" data-jump="r-ip">Sub-redes</a><a href="#redes" data-jump="r-rot">Roteamento</a><a href="#redes" data-jump="r-enl">Enlace</a><a href="#redes" data-jump="r-ex">Exercícios</a>
 </nav>
 <h2 id="r-camadas">Camadas: OSI e TCP/IP</h2>
+<div class="explain"><div class="lbl">Entenda o assunto</div><p>Imagine mandar uma encomenda: você embrulha, coloca numa caixa maior, a transportadora cola uma etiqueta de endereço e o caminhão leva até o destino, onde tudo é desembrulhado na ordem inversa. Redes funcionam assim. Cada <strong>camada</strong> resolve um problema só e entrega o resultado para a camada de baixo, que <strong>acrescenta o seu cabeçalho</strong> (isso se chama encapsulamento).</p><p>Na prática: a aplicação gera a mensagem; o transporte a divide em <strong>segmentos</strong> e coloca as portas; a camada de rede coloca os endereços IP e forma o <strong>pacote</strong>; o enlace coloca os endereços MAC e forma o <strong>quadro</strong>; a física transmite os <strong>bits</strong>. Para decidir qual camada resolve cada problema, pergunte: quem entrega entre vizinhos diretos (enlace, MAC), quem leva de uma rede a outra (rede, IP) e quem entrega ao programa certo dentro da máquina (transporte, porta).</p></div>
 <div class="tbl"><table>
 <thead><tr><th>OSI</th><th>TCP/IP</th><th>Unidade de dados</th><th>Exemplos</th><th>Equipamento</th></tr></thead>
 <tbody>
@@ -25,7 +26,10 @@
 <li>Endereço MAC tem 48 bits; IPv4 tem 32 bits; IPv6 tem 128 bits.</li>
 </ul>
 </div>
+<div class="worked"><div class="lbl">Exemplo passo a passo</div><p><strong>Você abre um site. O que acontece em cada camada?</strong></p><ol><li><strong>Aplicação:</strong> o navegador monta o pedido HTTP (o DNS descobre o IP do site).</li><li><strong>Transporte:</strong> o TCP divide o pedido em segmentos e marca a porta de destino (80 ou 443).</li><li><strong>Rede:</strong> o IP coloca o endereço de origem e o de destino no pacote; os roteadores escolhem o caminho.</li><li><strong>Enlace:</strong> o quadro leva o pacote até o próximo equipamento, usando endereço MAC (o do seu roteador).</li><li><strong>Física:</strong> o quadro vira sinal elétrico, luz ou rádio. No destino, o caminho se inverte e cada camada remove o seu cabeçalho.</li></ol></div>
+<div class="how"><div class="lbl">Como cai no ENADE</div><p>As questões costumam dar um protocolo ou um equipamento e pedir a camada (ex.: roteador é camada de rede, switch é enlace), ou pedir o nome da unidade de dados (segmento, pacote, quadro). Decore a tabela acima e o macete da ordem das camadas.</p></div>
 <h2 id="r-tcp">TCP x UDP</h2>
+<div class="explain"><div class="lbl">Entenda o assunto</div><p>O <strong>TCP</strong> é como uma ligação telefônica: antes de falar, os dois confirmam que estão na linha ("alô?" "alô, estou aqui" "ótimo"). Durante a conversa, cada trecho é confirmado e, se algo se perder, é repetido. Isso dá confiabilidade, mas custa tempo. O <strong>UDP</strong> é como jogar cartões-postais na caixa de correio: rápido e simples, mas ninguém avisa se algum se perdeu.</p><p>Por isso o TCP serve para o que não pode falhar (páginas, e-mail, arquivos) e o UDP para o que precisa de rapidez e tolera perda (chamada de vídeo, jogos, consultas DNS). Dois controles que se confundem: o <strong>controle de fluxo</strong> impede de sobrecarregar o <em>receptor</em>, e o <strong>controle de congestionamento</strong> impede de sobrecarregar a <em>rede</em>.</p></div>
 <div class="tbl"><table>
 <thead><tr><th></th><th>TCP</th><th>UDP</th></tr></thead>
 <tbody>
@@ -37,7 +41,10 @@
 </tbody>
 </table></div>
 <p>Para não confundir: <strong>controle de fluxo</strong> protege o receptor (não enviar mais do que ele aguenta); <strong>controle de congestionamento</strong> protege a rede (slow start, janela de congestionamento).</p>
+<div class="worked"><div class="lbl">Exemplo passo a passo</div><p><strong>Three-way handshake com números</strong></p><ol><li>O cliente envia <strong>SYN</strong> com seq = 100 ("quero conectar, começo a contar em 100").</li><li>O servidor responde <strong>SYN-ACK</strong> com seq = 300 e ack = 101 ("combinado, comece a mandar do 101; eu começo em 300").</li><li>O cliente envia <strong>ACK</strong> com ack = 301. A conexão está aberta e os dados podem fluir.</li><li>O SYN conta como 1 byte na numeração; por isso o ack é sempre o seq anterior + 1.</li></ol></div>
+<div class="how"><div class="lbl">Como cai no ENADE</div><p>Costuma cair como "qual protocolo usar nesta aplicação e por quê" ou como julgamento de afirmativas sobre handshake, janela deslizante e controle de congestionamento. Se a aplicação tolera perda e exige baixo atraso, a resposta é UDP.</p></div>
 <h2 id="r-portas">Portas que mais aparecem</h2>
+<div class="explain"><div class="lbl">Entenda o assunto</div><p>O endereço IP identifica a <strong>máquina</strong>, como o endereço de um prédio. A <strong>porta</strong> identifica o <strong>programa</strong> dentro da máquina, como o número do apartamento. Um servidor pode rodar web, SSH e e-mail no mesmo IP porque cada serviço escuta numa porta diferente.</p><p>As portas de 0 a 1023 são as "conhecidas" (reservadas aos serviços padrão). O cliente, quando abre uma conexão, escolhe uma porta alta aleatória como origem (porta efêmera). A combinação <strong>IP + porta</strong> é chamada de socket. Macete para a prova: <mark>22 SSH, 25 SMTP, 53 DNS, 80 HTTP, 443 HTTPS</mark>.</p></div>
 <div class="tbl"><table>
 <thead><tr><th>Protocolo</th><th>Porta</th><th>Transporte</th></tr></thead>
 <tbody>
@@ -53,7 +60,10 @@
 <tr><td>HTTPS</td><td>443</td><td>TCP</td></tr>
 </tbody>
 </table></div>
+<div class="worked"><div class="lbl">Exemplo passo a passo</div><p><strong>Como o servidor sabe para qual programa entregar?</strong></p><ol><li>Um cliente em 200.1.1.5 abre uma conexão com 10.0.0.2 na porta 443.</li><li>O cliente usa uma porta de origem aleatória, por exemplo 51234: o socket dele é 200.1.1.5:51234.</li><li>O pacote chega a 10.0.0.2; o sistema operacional olha a porta de destino (443) e entrega ao servidor HTTPS.</li><li>Se o pacote fosse para a porta 22, iria para o SSH, no mesmo IP.</li></ol></div>
+<div class="how"><div class="lbl">Como cai no ENADE</div><p>Aparece em questões que pedem para associar protocolo e porta, dizer qual transporte o serviço usa (DNS usa UDP 53) ou decidir qual porta liberar ou bloquear num firewall.</p></div>
 <h2 id="r-ip">Endereçamento IPv4 e sub-redes</h2>
+<div class="explain"><div class="lbl">Entenda o assunto</div><p>Um endereço IPv4 tem 32 bits, divididos em duas partes: a <strong>rede</strong> (o "bairro") e o <strong>host</strong> (a "casa"). A máscara, ou o prefixo /n, diz onde termina a parte da rede: um /24 usa 24 bits para rede e sobram 8 para hosts. Dividir uma rede em <strong>sub-redes</strong> é roubar bits da parte de host para criar mais redes menores.</p><p>O truque de prova é pensar em <strong>blocos</strong>. O tamanho do bloco é 2 elevado ao número de bits de host. Num /27 sobram 5 bits, então o bloco tem 32 endereços: as redes começam em 0, 32, 64, 96... O primeiro endereço do bloco é o da rede, o último é o de broadcast, e os de dentro são os hosts válidos.</p></div>
 <p>O prefixo /n diz quantos bits são da rede; sobram 32 − n bits para hosts. Hosts utilizáveis = 2<sup>32 − n</sup> − 2, porque o primeiro endereço é o da rede e o último é o de broadcast.</p>
 <div class="tbl"><table>
 <thead><tr><th>Prefixo</th><th>Máscara</th><th>Endereços no bloco</th><th>Hosts utilizáveis</th></tr></thead>
@@ -76,18 +86,26 @@
 </ol>
 </div>
 <p>Faixas privadas (RFC 1918): 10.0.0.0/8, 172.16.0.0/12 e 192.168.0.0/16. Para sair para a internet elas passam por <strong>NAT</strong>.</p>
+<div class="worked"><div class="lbl">Exemplo passo a passo</div><p><strong>Dividir 192.168.1.0/24 em 4 sub-redes iguais</strong></p><ol><li>Para 4 sub-redes, precisamos de 2 bits (2² = 4). O novo prefixo é 24 + 2 = <strong>/26</strong>.</li><li>Sobram 6 bits de host: cada bloco tem 64 endereços (62 hosts válidos).</li><li>As redes são: 192.168.1.0, .64, .128 e .192.</li><li>Variante: "quantos bits de host para 50 máquinas?" Como 2⁶ − 2 = 62 ≥ 50, usa-se 6 bits, ou seja, um /26.</li></ol></div>
+<div class="how"><div class="lbl">Como cai no ENADE</div><p>É a questão de cálculo mais certeira de redes: dado um IP com prefixo, achar a rede, o broadcast, a faixa de hosts, ou dizer se dois hosts estão na mesma sub-rede. Ensaie o método dos blocos até ficar automático.</p></div>
 <h2 id="r-rot">Roteamento</h2>
+<div class="explain"><div class="lbl">Entenda o assunto</div><p>O roteador é como um cruzamento com placas: ele olha o <strong>endereço IP de destino</strong> do pacote, consulta a sua <strong>tabela de roteamento</strong> e decide por qual saída mandar (o "próximo salto"). Ele não precisa conhecer o caminho inteiro, só a próxima placa.</p><p>Quando várias rotas servem para o mesmo destino, vale a <strong>mais específica</strong>, isto é, a de maior prefixo (<em>longest prefix match</em>). A rota <code>0.0.0.0/0</code> é a rota padrão: serve para tudo e só é usada se nenhuma outra casar. As tabelas são montadas por protocolos: RIP (vetor de distância), OSPF (estado de enlace) dentro de uma organização, e BGP entre organizações.</p></div>
 <ul>
 <li><strong>Vetor de distância</strong> (RIP, algoritmo de Bellman-Ford): cada roteador troca sua tabela só com os vizinhos; métrica é número de saltos (máximo 15 no RIP); sofre do problema de contagem ao infinito.</li>
 <li><strong>Estado de enlace</strong> (OSPF, algoritmo de Dijkstra): cada roteador conhece a topologia inteira e calcula o caminho mais curto.</li>
 <li><strong>BGP</strong> roteia entre sistemas autônomos (entre provedores); RIP e OSPF roteiam dentro de um sistema autônomo.</li>
 </ul>
+<div class="worked"><div class="lbl">Exemplo passo a passo</div><p><strong>Para onde vai o pacote destinado a 10.1.2.7?</strong></p><ol><li>Tabela: 10.0.0.0/8 → A; 10.1.0.0/16 → B; 10.1.2.0/24 → C; 0.0.0.0/0 → D.</li><li>O endereço 10.1.2.7 casa com as três primeiras rotas (e com a padrão).</li><li>Entre as que casam, escolhe-se a de maior prefixo: /24.</li><li>O pacote vai para <strong>C</strong>.</li></ol></div>
+<div class="how"><div class="lbl">Como cai no ENADE</div><p>Cai como pergunta conceitual: diferença entre vetor de distância e estado de enlace, quem usa Dijkstra e quem usa Bellman-Ford, e a diferença entre protocolo interno (RIP, OSPF) e externo (BGP).</p></div>
 <h2 id="r-enl">Camada de enlace</h2>
+<div class="explain"><div class="lbl">Entenda o assunto</div><p>A camada de enlace cuida da comunicação entre equipamentos <strong>vizinhos</strong>, no mesmo enlace. O endereço usado é o <strong>MAC</strong> (48 bits, gravado na placa de rede). O <strong>switch</strong> é o equipamento típico: ele observa de qual porta vem cada MAC e monta sozinho uma tabela, então passa a enviar os quadros só para a porta certa.</p><p>Quando vários equipamentos dividem o mesmo meio, é preciso um método de acesso: a Ethernet com cabo usa <strong>CSMA/CD</strong> (escuta, transmite e detecta colisão); o Wi-Fi usa <strong>CSMA/CA</strong> (tenta evitar a colisão, porque no rádio não dá para ouvir enquanto se fala). Para detectar erros no quadro usam-se paridade, checksum e principalmente o <strong>CRC</strong>.</p></div>
 <ul>
 <li>Ethernet usa <strong>CSMA/CD</strong> (detecta colisão); Wi-Fi usa <strong>CSMA/CA</strong> (evita colisão, porque no rádio não dá para detectar).</li>
 <li>Detecção de erros: paridade, checksum e CRC. Código de Hamming também corrige erro de 1 bit.</li>
 <li>Switch aprende em qual porta está cada MAC e monta a tabela de encaminhamento sozinho.</li>
 </ul>
+<div class="worked"><div class="lbl">Exemplo passo a passo</div><p><strong>Como um switch aprende?</strong></p><ol><li>A tabela começa vazia. A (porta 1) envia um quadro para B.</li><li>O switch não sabe onde B está, então <strong>inunda</strong> (flooding): manda para todas as portas, menos a de origem. Ele também aprende: "A está na porta 1".</li><li>B (porta 2) responde para A. O switch já sabe onde A está, entrega só na porta 1 e aprende: "B está na porta 2".</li><li>Dali em diante, A e B conversam só pelas portas certas, sem inundar a rede.</li></ol></div>
+<div class="how"><div class="lbl">Como cai no ENADE</div><p>Aparece em questões sobre a diferença entre hub, switch e roteador, sobre CSMA/CD x CSMA/CA e sobre detecção e correção de erros (Hamming corrige 1 bit).</p></div>
 <h2 id="r-ex">Exercícios</h2>
 <p>Responda de cabeça e só depois abra a resposta.</p>
 <div class="exlist">
