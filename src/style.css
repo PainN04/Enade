@@ -642,3 +642,13 @@ section.view:not([hidden]){animation:rise 260ms var(--ease) backwards}
 .rvopts{list-style:none;margin:0;padding:0;display:grid;gap:6px}
 .rvopts li{padding:8px 12px;border-radius:10px;background:var(--sunk)}
 .rvopts li.right{background:var(--ok-soft);color:var(--ok)}
+
+/* v16: discursivas */
+.disclist{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:14px 0}
+.disc textarea{width:100%;min-height:220px;resize:vertical;font:inherit;line-height:1.55;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--sheet);color:var(--ink)}
+.disc textarea:focus{outline:2px solid color-mix(in srgb,var(--brand) 50%,transparent);outline-offset:1px}
+.discsol{margin:8px 0}.discsol summary{cursor:pointer;font-weight:600}
+.padlist{list-style:none;margin:10px 0;padding:0;display:grid;gap:8px}
+.padlist label{display:flex;gap:10px;align-items:flex-start;cursor:pointer}
+.padlist input{margin-top:5px;flex:none}
+.dh{margin:4px 0 6px}

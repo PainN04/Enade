@@ -217,6 +217,7 @@ $('#mainPrac').innerHTML='<div class="today"><div class="eyebrow">Recomendado</d
 const qc=(a,t,d,s,off)=>'<button class="qc" type="button" data-act="'+a+'"'+(off?' disabled':'')+'><b>'+t+'</b><span>'+d+'</span><small>'+s+'</small></button>';
 $('#quick').innerHTML=qc('prova','Simulado com tempo','10 questões reais de provas anteriores, de todos os temas, corrigidas só no fim.','Cerca de 25 min')+
 qc('erros','Refazer meus erros',e?'As questões que você errou. Cada uma sai da lista depois de dois acertos seguidos.':'Quando você errar uma questão, ela fica guardada aqui.',e+(e===1?' questão':' questões'),!e)+
+qc('disc','Questões discursivas','Redija a resposta e compare com o padrão oficial de correção do Inep.',DISC.length+' questões')+
 qc('cards','Cartões de memorização','Perguntas rápidas para decorar fórmulas, complexidades, portas e pegadinhas.',k+' de '+CARDS.length+' que você já sabe');
 const anos=[2021,2017,2014,2011,2008].filter(a=>BANK.some(q=>q.src&&q.src.indexOf('ENADE '+a)===0));
 $('#fullBox').innerHTML='<div class="panel fullbox"><div><h2>Prova completa, como no dia</h2><p>As questões objetivas de uma prova de verdade, na ordem original, com <b>4 horas</b> de cronômetro regressivo. Só no final você vê o gabarito e as explicações.</p></div><div class="fullrow"><label class="fld" for="anoSel"><span>Ano da prova</span><select id="anoSel">'+anos.map(a=>'<option value="'+a+'">'+a+' ('+fullPool(a).length+' questões)</option>').join('')+'</select></label><button class="primary" type="button" id="btnFull">Começar a prova</button></div></div>';
@@ -334,6 +335,28 @@ if(e.key==='ArrowRight'&&cur.mode==='prova'){e.preventDefault();goQ(cur.i+1)}els
 else if(pos>=0&&k.length===1&&!cur.qs[cur.i].graded){const inp=document.getElementById('q'+cur.i+'o'+pos);if(inp){inp.checked=true;inp.dispatchEvent(new Event('change',{bubbles:true}))}}
 else if(e.key==='Enter'&&e.target.tagName!=='BUTTON'&&e.target.tagName!=='A'){e.preventDefault();if(cur.mode==='prova'){if(cur.i<cur.qs.length-1)goQ(cur.i+1)}else mainAction()}});
 
+/* ---------- questões discursivas ---------- */
+const discAll=()=>store.get('enade-disc',{});
+function discSave(id,patch){const a=discAll();a[id]=Object.assign({t:'',c:{},seen:false},a[id],patch);store.set('enade-disc',a)}
+function startDisc(){$('#setup').hidden=true;$('#quiz').innerHTML='';$('#result').hidden=true;$('#bar').hidden=true;$('#qnav').hidden=true;$('#cards').hidden=false;renderDiscList();window.scrollTo(0,0)}
+function renderDiscList(){const d=discAll();
+$('#cards').innerHTML='<div class="eyebrow">Questões discursivas</div><h2 class="dh">Escreva primeiro, depois compare</h2><p class="lead">Redija sua resposta como na prova. Depois abra o padrão de resposta oficial e marque o que o seu texto cobriu. Seu rascunho fica salvo neste aparelho.</p><div class="disclist">'+DISC.map(x=>{const r=d[x.id];const st=r&&r.seen?'Já comparei com o padrão':(r&&r.t?'Rascunho salvo':'Ainda não feita');
+return '<button class="qc" type="button" data-disc="'+x.id+'"><b>'+esc(x.titulo)+'</b><span>'+x.parte+' · ENADE '+x.ano+'</span><small>'+st+'</small></button>'}).join('')+'</div><div class="btns"><button class="ghost" id="discOut" type="button">Voltar</button></div>';
+$$('#cards [data-disc]').forEach(b=>b.onclick=()=>{renderDisc(b.dataset.disc);window.scrollTo(0,0)});$('#discOut').onclick=resetPractice}
+function renderDisc(id){const x=DISC.find(y=>y.id===id);if(!x)return;const r=discAll()[id]||{t:'',c:{},seen:false};
+const words=t=>(t.trim()?t.trim().split(/\s+/).length:0);
+$('#cards').innerHTML='<div class="eyebrow">Discursiva · ENADE '+x.ano+' · '+x.parte+'</div><div class="fcard disc"><div class="qhead"><span class="qn">'+esc(x.titulo)+'</span><span class="chip">cerca de '+x.min+' min</span></div><div class="qtext">'+x.q+'</div>'+(x.code?'<details class="discsol"><summary>Ver a solução em pseudocódigo (só depois de tentar)</summary><pre><code>'+esc(x.code)+'</code></pre></details>':'')+
+'<label class="fld" for="discTxt"><span>Sua resposta</span><textarea id="discTxt" rows="12" placeholder="Escreva aqui, como na prova.">'+esc(r.t)+'</textarea></label><div class="empty" id="discCnt"></div>'+
+'<div class="btns"><button class="primary" id="discShow" type="button">'+(r.seen?'Esconder o padrão de resposta':'Ver o padrão de resposta')+'</button><button class="ghost" id="discBack" type="button">Voltar à lista</button></div><div id="discPad"></div></div>';
+const ta=$('#discTxt'),cnt=()=>{$('#discCnt').textContent=words(ta.value)+(words(ta.value)===1?' palavra':' palavras')};cnt();
+ta.addEventListener('input',()=>{discSave(id,{t:ta.value});cnt()});
+const pad=()=>{const c=discAll()[id].c||{};$('#discPad').innerHTML='<div class="fb ok"><p class="fbl"><span>Padrão de resposta do Inep</span></p><p>O que o seu texto deveria trazer. Marque o que você cobriu:</p><ul class="padlist">'+x.p.map((t,i)=>'<li><label><input type="checkbox" data-i="'+i+'"'+(c[i]?' checked':'')+'><span>'+t+'</span></label></li>').join('')+'</ul>'+(x.nota?'<p class="fbtip">'+x.nota+'</p>':'')+'<p class="fbtip" id="padSum"></p></div>';
+const sum=()=>{const cc=discAll()[id].c||{},n=x.p.filter((_,i)=>cc[i]).length;$('#padSum').textContent='Você marcou '+n+' de '+x.p.length+' pontos.'};sum();
+$$('#discPad input').forEach(i=>i.onchange=()=>{const cc=Object.assign({},discAll()[id].c);cc[i.dataset.i]=i.checked?1:0;discSave(id,{c:cc});sum()})};
+if(r.seen){discSave(id,{});pad()}
+$('#discShow').onclick=()=>{const seen=!(discAll()[id]||{}).seen;discSave(id,{seen});if(seen){touchDay();save();pad();$('#discShow').textContent='Esconder o padrão de resposta';scrollToId('discPad')}else{$('#discPad').innerHTML='';$('#discShow').textContent='Ver o padrão de resposta'}};
+$('#discBack').onclick=()=>{renderDiscList();window.scrollTo(0,0)}}
+
 /* ---------- cartões de memorização ---------- */
 function startCards(only){const P=prof();const idx=only||CARDS.map((c,i)=>i);
 const list=only?shuffle(idx):shuffle(idx.filter(i=>!P.fc[i])).concat(shuffle(idx.filter(i=>P.fc[i]))).slice(0,12);
@@ -355,6 +378,7 @@ function act(a){
 if(a==='diag')return go(startDiag);
 if(a==='erros')return go(startErrors);
 if(a==='cards')return go(()=>startCards());
+if(a==='disc')return go(startDisc);
 if(a==='prova')return go(()=>startQuiz({prova:true}));
 if(a==='foco')return go(()=>startQuiz({foco:true}));
 if(a.indexOf('done:')===0){const P=prof();P.plan[a.slice(5)]=1;touchDay();save();refreshAll();return}
