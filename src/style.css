@@ -560,3 +560,24 @@ details.allplan[open] summary{margin-bottom:8px}
 .qfoot button{width:100%}
 .qfoot #btnGrade{grid-column:1/-1;order:-1}
 }
+
+/* v11: telas mais largas no computador */
+.wrap{max-width:1080px}
+section.view.wrap,#v-praticar.quizon{max-width:1080px}
+@media (min-width:900px){
+#homeBody{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px 24px;align-items:stretch}
+#homeBody>*{grid-column:1/-1}
+#homeBody>.blk{grid-column:auto}
+#homeBody>.blk>.tlist,#homeBody>.blk>ul.upnext{flex:1}
+#homeBody .welcome ol.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;max-width:none}
+#homeBody .welcome ol.steps li{border-top:0}
+#tlist{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:40px;padding:2px 22px}
+#tlist .tgrp{grid-column:1/-1}
+#tlist .tgrp + .trow2 + .trow2{border-top:0}
+#tlist .trow2:nth-child(2){border-top:0}
+#v-progresso .dmap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:40px}
+#v-progresso .dmap .drow{grid-template-columns:minmax(0,1fr) 90px auto auto}
+#v-progresso .dmap .drow:nth-child(2){border-top:0}
+.guides{grid-template-columns:repeat(4,minmax(0,1fr))}
+#v-ler .reader p,#v-ler .reader li,#v-ler .reader ul,#v-ler .reader ol,#v-ler .note{max-width:80ch}
+}
