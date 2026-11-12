@@ -262,12 +262,20 @@ function gradeCard(k){const it=cur.qs[k],q=it.q,card=document.getElementById('q'
 card.classList.add('graded');card.querySelectorAll('input').forEach(i=>i.disabled=true);
 card.querySelectorAll('.opt').forEach(l=>{const oi=+l.dataset.oi;if(oi===q.a)l.classList.add('right');else if(oi===it.pick)l.classList.add('wrong')});
 const letter=LETTERS[it.perm.indexOf(q.a)],r=it.right;
-card.querySelector('.fbslot').innerHTML='<div class="fb '+(r?'ok':'no')+'"><b class="'+(r?'ok':'no')+'">'+(r?'Acertou.':(it.pick===null?'Em branco.':'Errou.')+' Resposta: '+letter+'.')+'</b> '+q.e+(CHUNK[q.s]?' <a href="#ler/'+q.s+'">Rever o resumo de '+esc(NAMES[q.s])+'</a>':'')+'</div>';
+const opt=oi=>{const t=q.o[oi];return '<b>'+LETTERS[it.perm.indexOf(oi)]+')</b> '+(t.length>140?'<span class="fbdim">(alternativa destacada acima)</span>':esc(t))};
+const rev=CHUNK[q.s]?'<a class="fbrev" href="#ler/'+q.s+'">'+(r?'Rever o resumo de ':'Estudar o resumo de ')+esc(NAMES[q.s])+'</a>':'';
+card.querySelector('.fbslot').innerHTML='<div class="fb '+(r?'ok':'no')+'">'+
+(r?'<p class="fbh ok">Acertou!</p><p class="fbl"><span>Resposta</span>'+opt(q.a)+'</p>'
+:'<p class="fbh no">'+(it.pick===null?'Você deixou em branco.':'Não foi dessa vez.')+'</p>'+(it.pick===null?'':'<p class="fbl"><span>Você marcou</span>'+opt(it.pick)+'</p>')+'<p class="fbl"><span>Resposta certa</span>'+opt(q.a)+'</p>')+
+'<div class="fbwhy"><span>Por quê</span><p>'+q.e+'</p></div>'+
+(!r&&q.items?'<p class="fbtip">Dica: em questões com itens I, II, III, julgue cada item sozinho antes de olhar as alternativas.</p>':'')+
+(!r&&q.code?'<p class="fbtip">Dica: refaça o código no papel, anotando o valor de cada variável linha por linha.</p>':'')+
+(!r?'<p class="fbtip">Esta questão foi guardada em "Refazer meus erros".</p>':'')+rev+'</div>';
 record(q,r)}
 function mainAction(){if(!cur||cur.done)return;
 if(cur.mode==='prova'){finish();return}
 const it=cur.qs[cur.i];
-if(!it.graded){gradeCard(cur.i);save();updBar();const fb=document.querySelector('#q'+cur.i+' .fbslot');if(fb)fb.scrollIntoView({block:'nearest'});return}
+if(!it.graded){gradeCard(cur.i);save();updBar();const fb=document.querySelector('#q'+cur.i+' .fbslot');if(fb){const r=fb.getBoundingClientRect(),bar=$('#bar'),bt=bar&&!bar.hidden?bar.getBoundingClientRect().top:innerHeight;if(r.top>bt-160||r.bottom>bt)fb.scrollIntoView({block:r.height>bt-120?'start':'end',behavior:'smooth'})};return}
 if(cur.i<cur.qs.length-1){document.getElementById('q'+cur.i).hidden=true;cur.i++;document.getElementById('q'+cur.i).hidden=false;updBar();window.scrollTo(0,0)}
 else finish()}
 function finish(){clearInterval(tick);const P=prof();

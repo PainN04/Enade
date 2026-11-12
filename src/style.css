@@ -284,6 +284,16 @@ ol.items li{padding-left:4px}
 .fb.ok{background:var(--ok-soft)} .fb.no{background:var(--bad-soft)}
 .fb b.ok{color:var(--ok)} .fb b.no{color:var(--bad)}
 .fb a{font-size:14px}
+.fb p{margin:0}
+.fb .fbh{font-weight:700;font-size:16px;margin-bottom:8px}
+.fb .fbh.ok{color:var(--ok)} .fb .fbh.no{color:var(--bad)}
+.fb .fbl{margin:4px 0;line-height:1.45}
+.fb .fbl>span,.fb .fbwhy>span{display:block;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;opacity:.7;margin-bottom:2px}
+.fb .fbdim{opacity:.75}
+.fb .fbwhy{margin:12px 0 4px;padding-top:10px;border-top:1px solid color-mix(in srgb,currentColor 15%,transparent)}
+.fb .fbwhy p{line-height:1.55}
+.fb .fbtip{margin-top:8px;font-size:14px;opacity:.85}
+.fb .fbrev{display:inline-block;margin-top:10px;font-weight:600}
 .stickybar{position:sticky;bottom:0;padding-bottom:env(safe-area-inset-bottom,0px);z-index:4}
 .stickybar .in{background:color-mix(in srgb,var(--sheet) 92%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:18px;padding:10px 12px 10px 16px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow-lg);margin-bottom:12px;flex-wrap:wrap}
 .stickybar .prog{flex:1;min-width:150px;font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums}
@@ -514,3 +524,8 @@ details.allplan[open] summary{margin-bottom:8px}
 .dlg .login label,.dlg .login h2{align-self:stretch;text-align:left}
 .dlg .login .btns{justify-content:flex-start}
 .dlg .login .btns button{width:auto}
+.graded .opt.right,.graded .opt.right:has(input:checked){background:var(--ok-soft);border-color:var(--ok)}
+.graded .opt.right input:checked ~ .bub{border-color:var(--ok);background:var(--ok);color:var(--sheet)}
+.graded .opt.wrong,.graded .opt.wrong:has(input:checked){background:var(--bad-soft);border-color:var(--bad)}
+.graded .opt.wrong input:checked ~ .bub{border-color:var(--bad);background:var(--bad);color:var(--sheet)}
+.fbslot{scroll-margin-bottom:170px;scroll-margin-top:90px}

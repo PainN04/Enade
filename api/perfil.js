@@ -20,6 +20,14 @@ async function save(nome, rec) {
     access: 'private', addRandomSuffix: false, allowOverwrite: true, contentType: 'application/json'
   });
 }
+// Perfis que pediram para recomeçar do zero: o progresso é apagado uma única vez
+// (a senha continua a mesma) e as sessões abertas são encerradas.
+const RECOMECAR = ['paulo'];
+function recomecar(rec, nome) {
+  if (!rec || rec.recomecou || !RECOMECAR.includes(norm(nome).toLowerCase())) return false;
+  rec.dados = null; rec.tokens = []; rec.recomecou = Date.now();
+  return true;
+}
 function checkToken(rec, token) {
   if (!rec || typeof token !== 'string' || token.length < 20) return false;
   const h = tokHash(token);
@@ -46,6 +54,8 @@ module.exports = async (req, res) => {
         novo = true;
       } else if (!safeEq(hashPw(senha, rec.salt), rec.pw)) {
         return res.status(401).json({ erro: 'senha_errada' });
+      } else {
+        recomecar(rec, nome);
       }
       const token = crypto.randomBytes(24).toString('hex');
       rec.tokens = [tokHash(token)].concat(rec.tokens || []).slice(0, 10);
@@ -54,6 +64,7 @@ module.exports = async (req, res) => {
     }
     if (b.acao === 'carregar' || b.acao === 'salvar') {
       const rec = await load(nome);
+      if (recomecar(rec, nome)) { await save(nome, rec); return res.status(401).json({ erro: 'sessao' }); }
       if (!checkToken(rec, b.token)) return res.status(401).json({ erro: 'sessao' });
       if (b.acao === 'carregar') return res.json({ ok: true, nome: rec.nome, dados: rec.dados });
       const dados = b.dados;
