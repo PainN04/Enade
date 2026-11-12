@@ -1,0 +1,181 @@
+<section id="lib-geral">
+<h2 id="a-arq">Arquitetura e circuitos digitais</h2>
+<p>É o tema que mais caiu de 2011 a 2021. A prova cobra quatro coisas: ler um circuito e escrever a expressão, montar tabela-verdade, entender pipeline e calcular desempenho de cache.</p>
+<div class="tbl"><table>
+<thead><tr><th>Porta</th><th>Saída 1 quando</th><th>Expressão</th></tr></thead>
+<tbody>
+<tr><td>AND</td><td>todas as entradas são 1</td><td>A·B</td></tr>
+<tr><td>OR</td><td>pelo menos uma entrada é 1</td><td>A + B</td></tr>
+<tr><td>XOR</td><td>as entradas são diferentes</td><td>A ⊕ B = A'B + AB'</td></tr>
+<tr><td>NAND / NOR</td><td>negação do AND / do OR</td><td>(A·B)' / (A+B)'</td></tr>
+</tbody></table></div>
+<ul>
+<li><strong>De Morgan:</strong> <mark>(A·B)' = A' + B'</mark> e <mark>(A+B)' = A'·B'</mark>.</li>
+<li><strong>Somador completo:</strong> S = A ⊕ B ⊕ Cin; Cout = A·B + Cin·(A ⊕ B).</li>
+<li><strong>Pipeline de k estágios:</strong> n instruções levam <mark>k + n − 1</mark> ciclos sem conflitos. Conflitos: estrutural (recurso disputado), de dados (resolve com adiantamento) e de controle (desvios; resolve com previsão de desvio e BTB).</li>
+<li><strong>Cache:</strong> tempo médio = tempo da cache + taxa de falha × penalidade. Localidade temporal (reusar o mesmo dado) e espacial (usar os vizinhos) explicam por que a cache funciona.</li>
+<li><strong>Von Neumann x Harvard:</strong> Von Neumann tem programa e dados na mesma memória; Harvard separa as duas.</li>
+</ul>
+<div class="note"><strong>Pegadinhas comuns</strong><ul><li>Prefetch e pipeline são otimizações posteriores, não definem a arquitetura de Von Neumann (2021).</li><li>Para ler um circuito, escreva a expressão de cada porta da entrada para a saída e só simplifique no fim.</li><li>Binário para hexa: agrupe de 4 em 4 bits a partir da direita.</li></ul></div>
+
+<h2 id="a-alg">Algoritmos e complexidade</h2>
+<p>Cai em quase toda prova, muitas vezes com código em C para analisar. Saiba a complexidade dos algoritmos clássicos e como contar passos de laços.</p>
+<div class="tbl"><table>
+<thead><tr><th>Algoritmo</th><th>Melhor</th><th>Médio</th><th>Pior</th><th>Estável?</th></tr></thead>
+<tbody>
+<tr><td>Busca sequencial</td><td>O(1)</td><td>O(n)</td><td>O(n)</td><td>–</td></tr>
+<tr><td>Busca binária (vetor ordenado)</td><td>O(1)</td><td>O(log n)</td><td>O(log n)</td><td>–</td></tr>
+<tr><td>Bubble / insertion sort</td><td>O(n)</td><td>O(n²)</td><td>O(n²)</td><td>Sim</td></tr>
+<tr><td>Selection sort</td><td>O(n²)</td><td>O(n²)</td><td>O(n²)</td><td>Não</td></tr>
+<tr><td>Merge sort</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n log n)</td><td>Sim</td></tr>
+<tr><td>Quicksort</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n²)</td><td>Não</td></tr>
+<tr><td>Heapsort</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n log n)</td><td>Não</td></tr>
+</tbody></table></div>
+<ul>
+<li><strong>Laços:</strong> dois laços aninhados até n dão O(n²); um laço que divide n por 2 a cada volta dá O(log n).</li>
+<li><strong>Recorrências comuns:</strong> T(n) = T(n/2) + 1 é O(log n); T(n) = 2T(n/2) + n é O(n log n); T(n) = T(n−1) + n é O(n²); T(n) = 2T(n−1) + 1 é O(2ⁿ).</li>
+<li><strong>Paradigmas:</strong> divisão e conquista (merge sort), guloso (Kruskal, Dijkstra, mochila fracionária), programação dinâmica (mochila 0/1, maior subsequência comum).</li>
+</ul>
+<div class="note"><strong>Pegadinhas comuns</strong><ul><li>O quicksort usa O(n) de pilha no pior caso (2021).</li><li>Busca binária só funciona em vetor ordenado e com acesso direto por índice.</li></ul></div>
+
+<h2 id="a-ed">Estruturas de dados</h2>
+<p>A prova pede para escolher a estrutura certa para um problema e para simular inserções e percursos em árvores.</p>
+<div class="tbl"><table>
+<thead><tr><th>Estrutura</th><th>Regra</th><th>Uso típico</th></tr></thead>
+<tbody>
+<tr><td>Pilha</td><td>LIFO: sai o último que entrou</td><td>Chamadas de função, desfazer, expressões</td></tr>
+<tr><td>Fila</td><td>FIFO: sai o primeiro que entrou</td><td>Escalonamento, BFS, buffers</td></tr>
+<tr><td>Deque</td><td>Insere e remove nas duas pontas</td><td>Janelas deslizantes</td></tr>
+<tr><td>Heap</td><td>Pai ≥ filhos (heap máximo)</td><td>Fila de prioridade, heapsort</td></tr>
+<tr><td>Tabela hash</td><td>Posição = hash(chave)</td><td>Busca média O(1)</td></tr>
+</tbody></table></div>
+<ul>
+<li><strong>Árvore binária de busca:</strong> menores à esquerda, maiores à direita. O percurso <mark>em ordem</mark> sai ordenado. Pré-ordem: raiz, esquerda, direita. Pós-ordem: esquerda, direita, raiz.</li>
+<li><strong>AVL:</strong> balanceada por rotações, altura O(log n). Sem balanceamento, inserir em ordem crescente vira uma lista e a busca cai para O(n).</li>
+<li><strong>Heap em vetor (índice 0):</strong> filhos de i em 2i + 1 e 2i + 2; pai em (i − 1)/2. Montar um heap com buildHeap custa O(n); cada heapify, O(log n).</li>
+<li>Uma árvore binária com h níveis tem no máximo 2ʰ − 1 nós.</li>
+</ul>
+
+<h2 id="a-grafo">Grafos</h2>
+<p>Dijkstra, árvore geradora mínima e buscas aparecem em quase toda prova, quase sempre pedindo para simular o algoritmo num grafo pequeno.</p>
+<div class="tbl"><table>
+<thead><tr><th>Algoritmo</th><th>Resolve</th><th>Detalhe</th></tr></thead>
+<tbody>
+<tr><td>BFS</td><td>Menor número de arestas, visita por camadas</td><td>Usa fila; O(V + E)</td></tr>
+<tr><td>DFS</td><td>Ciclos, ordenação topológica, componentes</td><td>Usa pilha ou recursão; O(V + E)</td></tr>
+<tr><td>Dijkstra</td><td>Menor caminho a partir de uma origem</td><td>Só pesos ≥ 0; guloso</td></tr>
+<tr><td>Bellman-Ford</td><td>Menor caminho com pesos negativos</td><td>Detecta ciclo negativo; O(V·E)</td></tr>
+<tr><td>Kruskal</td><td>Árvore geradora mínima</td><td>Arestas em ordem de peso, sem formar ciclo</td></tr>
+<tr><td>Prim</td><td>Árvore geradora mínima</td><td>Cresce a partir de um vértice</td></tr>
+</tbody></table></div>
+<ul>
+<li>Soma dos graus = 2 × número de arestas. Árvore com n vértices tem n − 1 arestas.</li>
+<li><strong>Simulando Dijkstra:</strong> a cada passo, feche o vértice aberto de menor distância e atualize os vizinhos com distância(atual) + peso, se for menor.</li>
+<li>Matriz de adjacência ocupa O(V²); lista de adjacência ocupa O(V + E).</li>
+</ul>
+
+<h2 id="a-teo">Teoria da computação e compiladores</h2>
+<p>Autômatos, gramáticas, máquina de Turing e P x NP caem toda prova, junto com as fases do compilador.</p>
+<div class="tbl"><table>
+<thead><tr><th>Classe de linguagem</th><th>Máquina</th><th>Exemplo</th></tr></thead>
+<tbody>
+<tr><td>Regular</td><td>Autômato finito (AFD = AFN)</td><td>a*b*, número par de a</td></tr>
+<tr><td>Livre de contexto</td><td>Autômato com pilha</td><td>aⁿbⁿ, parênteses balanceados, palíndromos</td></tr>
+<tr><td>Sensível ao contexto</td><td>Autômato linearmente limitado</td><td>aⁿbⁿcⁿ</td></tr>
+<tr><td>Recursivamente enumerável</td><td>Máquina de Turing</td><td>Qualquer problema computável</td></tr>
+</tbody></table></div>
+<ul>
+<li><strong>P x NP:</strong> P ⊆ NP. NP-completo é NP e tão difícil quanto qualquer NP. Se um NP-completo cair em P, então P = NP (questão em aberto).</li>
+<li><strong>Indecidível:</strong> o problema da parada não tem algoritmo.</li>
+<li><strong>Compilador:</strong> léxico (tokens) → sintático (árvore, gramática) → semântico (tipos, declarações) → código intermediário → otimização → geração de código.</li>
+<li><strong>Analisadores sintáticos:</strong> LL é descendente (da raiz para as folhas) e não aceita recursão à esquerda; LR é ascendente (empilha e reduz) e é mais poderoso.</li>
+</ul>
+
+<h2 id="a-so">Sistemas operacionais</h2>
+<p>Escalonamento, concorrência e memória virtual se repetem em todas as provas.</p>
+<div class="tbl"><table>
+<thead><tr><th>Escalonador</th><th>Ideia</th><th>Onde usar</th></tr></thead>
+<tbody>
+<tr><td>FIFO (FCFS)</td><td>Ordem de chegada</td><td>Lote</td></tr>
+<tr><td>SJF</td><td>Menor tarefa primeiro; menor espera média</td><td>Lote</td></tr>
+<tr><td>Round-robin</td><td>Fatia de tempo (quantum) para cada um</td><td>Interativo</td></tr>
+<tr><td>Prioridades</td><td>Mais prioritário primeiro; risco de inanição</td><td>Interativo</td></tr>
+<tr><td>Rate monotonic</td><td>Período menor, prioridade maior</td><td>Tempo real</td></tr>
+</tbody></table></div>
+<ul>
+<li><strong>Região crítica:</strong> trecho que mexe em dado compartilhado. Ferramentas: mutex, semáforo, monitor. Desabilitar interrupções não funciona em multiprocessador (2021).</li>
+<li><strong>Deadlock:</strong> exclusão mútua + posse e espera + não preempção + espera circular. Quebre uma condição para evitar.</li>
+<li><strong>Paginação:</strong> página de 2ᵏ bytes usa k bits de deslocamento; o resto do endereço é o número da página. Falta de página traz a página do disco.</li>
+<li><strong>Substituição:</strong> FIFO tira a mais antiga; LRU tira a usada há mais tempo; o ótimo tira a que vai demorar mais para ser usada.</li>
+<li>Threads do mesmo processo compartilham memória; cada uma tem pilha e registradores próprios.</li>
+</ul>
+
+<h2 id="a-bd">Banco de dados</h2>
+<p>Modelo entidade-relacionamento, SQL e normalização caem toda prova.</p>
+<ul>
+<li><strong>ER para relacional:</strong> 1:1 põe a chave estrangeira em um dos lados; <mark>1:N põe no lado N</mark>; N:N cria uma tabela associativa com as duas chaves.</li>
+<li><strong>Normalização:</strong> 1FN valores atômicos; 2FN sem dependência parcial de chave composta; 3FN sem dependência transitiva; BCNF todo determinante é chave candidata.</li>
+<li><strong>ACID:</strong> Atomicidade, Consistência, Isolamento e Durabilidade.</li>
+</ul>
+<pre><code>SELECT d.nome, COUNT(*) AS qtd
+FROM funcionario f
+JOIN departamento d ON d.id = f.depto_id
+WHERE f.salario > 3000
+GROUP BY d.nome
+HAVING COUNT(*) >= 5
+ORDER BY qtd DESC;</code></pre>
+<div class="note"><strong>Pegadinhas comuns</strong><ul><li>WHERE filtra linhas antes de agrupar; HAVING filtra grupos depois.</li><li>INNER JOIN só traz o que casa; LEFT JOIN traz toda a tabela da esquerda, com NULL onde não casar.</li><li>COUNT(coluna) ignora NULL; COUNT(*) conta todas as linhas.</li></ul></div>
+
+<h2 id="a-es">Engenharia de software e IHC</h2>
+<p>Métodos ágeis, testes, UML e usabilidade. As questões costumam ser de "assinale as afirmativas corretas".</p>
+<ul>
+<li><strong>Scrum:</strong> Product Owner prioriza o backlog; Scrum Master remove impedimentos; o time é auto-organizado. Eventos: planejamento da sprint, reunião diária, revisão e retrospectiva.</li>
+<li><strong>Modelos:</strong> cascata é sequencial; iterativo e incremental entrega em ciclos, aceita mudança de requisitos e testa a cada ciclo.</li>
+<li><strong>Testes:</strong> unidade, integração, sistema e aceitação. Caixa-branca olha o código; caixa-preta olha a especificação (partição de equivalência, valor-limite).</li>
+<li><strong>UML:</strong> herança é seta com triângulo vazio; composição é losango cheio; agregação é losango vazio.</li>
+<li><strong>Orientação a objetos:</strong> encapsulamento esconde o estado; herança reaproveita; polimorfismo escolhe o método em tempo de execução. Sobrecarga é mesmo nome com parâmetros diferentes.</li>
+<li><strong>IHC:</strong> heurísticas de Nielsen (visibilidade do estado, prevenção de erros, consistência), personas e cenários, testes de usabilidade e acessibilidade.</li>
+</ul>
+
+<h2 id="a-log">Lógica e matemática discreta</h2>
+<p>Lógica proposicional cai em quase toda prova, às vezes como discursiva (2021). Contagem e probabilidade aparecem também.</p>
+<div class="tbl"><table>
+<thead><tr><th>Equivalência</th><th>Fórmula</th></tr></thead>
+<tbody>
+<tr><td>Implicação</td><td>p → q ≡ ¬p ∨ q ≡ ¬q → ¬p</td></tr>
+<tr><td>De Morgan</td><td>¬(p ∧ q) ≡ ¬p ∨ ¬q; ¬(p ∨ q) ≡ ¬p ∧ ¬q</td></tr>
+<tr><td>Quantificadores</td><td>¬∀x P(x) ≡ ∃x ¬P(x); ¬∃x P(x) ≡ ∀x ¬P(x)</td></tr>
+</tbody></table></div>
+<ul>
+<li><strong>Tautologia:</strong> verdadeira em todas as linhas. <strong>Contradição:</strong> falsa em todas. <strong>Satisfazível:</strong> verdadeira em pelo menos uma.</li>
+<li><strong>Contagem:</strong> arranjo (ordem importa) n!/(n−k)!; combinação (ordem não importa) n!/(k!(n−k)!). Um conjunto de n elementos tem 2ⁿ subconjuntos.</li>
+<li><strong>Indução:</strong> prove a base e depois que P(k) implica P(k + 1).</li>
+<li><strong>Normal:</strong> ±1σ ≈ 68%, ±2σ ≈ 95%, ±3σ ≈ 99,7%.</li>
+</ul>
+
+<h2 id="a-ia">Inteligência artificial</h2>
+<p>Aprendizado de máquina caiu forte em 2021. Prolog e busca aparecem nas provas mais antigas.</p>
+<ul>
+<li><strong>Supervisionado:</strong> aprende com exemplos rotulados (classificação, regressão). <strong>Não supervisionado:</strong> acha padrões sem rótulo (agrupamento, k-means). <strong>Reforço:</strong> aprende com recompensa.</li>
+<li><strong>Overfitting:</strong> ótimo no treino e ruim no teste. Mais dados e regularização ajudam.</li>
+<li><strong>Redes neurais:</strong> convolucionais para imagens; recorrentes para sequências. Mais camadas e mais dados aumentam o tempo de treino.</li>
+<li><strong>Busca:</strong> BFS acha o caminho com menos passos; A* usa f = g + h e é ótima se h nunca superestima o custo.</li>
+<li><strong>Prolog:</strong> fatos e regras; vírgula é E, ponto e vírgula é OU; <code>X \= Y</code> exige valores diferentes.</li>
+</ul>
+
+<h2 id="a-seg">Segurança e computação em nuvem</h2>
+<p>Criptografia, nuvem e LGPD caíram em 2021; ataques de rede, em 2017.</p>
+<div class="tbl"><table>
+<thead><tr><th>Objetivo</th><th>Ferramenta</th></tr></thead>
+<tbody>
+<tr><td>Confidencialidade</td><td>Cifra simétrica (AES) ou assimétrica (RSA)</td></tr>
+<tr><td>Integridade</td><td>Hash (SHA-256), MAC</td></tr>
+<tr><td>Autenticidade e não repúdio</td><td>Assinatura digital: cifra com a chave privada do remetente</td></tr>
+</tbody></table></div>
+<ul>
+<li><strong>Assimétrica:</strong> para sigilo, cifre com a <mark>pública do destinatário</mark>; para assinar, use a <mark>sua privada</mark>.</li>
+<li><strong>Nuvem:</strong> SaaS (software pronto), PaaS (plataforma para seu código), IaaS (máquinas virtuais). Elasticidade é aumentar e reduzir recursos conforme a demanda.</li>
+<li><strong>Ataques:</strong> man in the middle (ARP spoofing), negação de serviço, SQL injection, phishing.</li>
+<li><strong>LGPD:</strong> protege dados pessoais e sensíveis; o titular pode acessar, corrigir e pedir a eliminação; dado anonimizado que pode ser revertido continua sendo pessoal.</li>
+</ul>
+</section>

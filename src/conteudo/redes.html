@@ -1,0 +1,101 @@
+<section id="lib-redes">
+<div class="eyebrow">Resumo · Componente específico</div>
+<h1>Redes de computadores</h1>
+<p class="lead">No ENADE, redes cobra sobretudo três coisas: em que camada cada protocolo atua, cálculo de sub-redes e a diferença entre TCP e UDP.</p>
+<nav class="subnav" aria-label="Tópicos de redes">
+<a href="#redes" data-jump="r-camadas">Camadas</a><a href="#redes" data-jump="r-tcp">TCP x UDP</a><a href="#redes" data-jump="r-portas">Portas</a><a href="#redes" data-jump="r-ip">Sub-redes</a><a href="#redes" data-jump="r-rot">Roteamento</a><a href="#redes" data-jump="r-enl">Enlace</a><a href="#redes" data-jump="r-ex">Exercícios</a>
+</nav>
+<h2 id="r-camadas">Camadas: OSI e TCP/IP</h2>
+<div class="tbl"><table>
+<thead><tr><th>OSI</th><th>TCP/IP</th><th>Unidade de dados</th><th>Exemplos</th><th>Equipamento</th></tr></thead>
+<tbody>
+<tr><td>7 Aplicação, 6 Apresentação, 5 Sessão</td><td>Aplicação</td><td>Mensagem</td><td>HTTP, DNS, SMTP, FTP, SSH, DHCP</td><td>Gateway de aplicação, proxy</td></tr>
+<tr><td>4 Transporte</td><td>Transporte</td><td>Segmento (TCP) ou datagrama (UDP)</td><td>TCP, UDP</td><td>Firewall com estado</td></tr>
+<tr><td>3 Rede</td><td>Internet</td><td>Pacote</td><td>IP, ICMP, OSPF, BGP</td><td>Roteador</td></tr>
+<tr><td>2 Enlace</td><td>Acesso à rede</td><td>Quadro</td><td>Ethernet, Wi-Fi (802.11), ARP, PPP</td><td>Switch, bridge</td></tr>
+<tr><td>1 Física</td><td>Acesso à rede</td><td>Bit</td><td>Cabos, fibra, rádio</td><td>Hub, repetidor</td></tr>
+</tbody>
+</table></div>
+<p>Macete OSI, de baixo para cima: <mark>Física, Enlace, Rede, Transporte, Sessão, Apresentação, Aplicação</mark>. Cada camada só conversa com a camada vizinha e acrescenta seu cabeçalho (encapsulamento).</p>
+<div class="note"><strong>Pegadinhas comuns</strong>
+<ul>
+<li>ARP traduz IP em MAC e fica entre as camadas 2 e 3; na dúvida, a prova costuma tratá-lo como enlace.</li>
+<li>DNS usa UDP na porta 53 para consultas e TCP para respostas grandes e transferência de zona.</li>
+<li>Switch trabalha com MAC (camada 2); roteador trabalha com IP (camada 3). Hub só repete bits.</li>
+<li>Endereço MAC tem 48 bits; IPv4 tem 32 bits; IPv6 tem 128 bits.</li>
+</ul>
+</div>
+<h2 id="r-tcp">TCP x UDP</h2>
+<div class="tbl"><table>
+<thead><tr><th></th><th>TCP</th><th>UDP</th></tr></thead>
+<tbody>
+<tr><td>Conexão</td><td>Orientado a conexão (three-way handshake: SYN, SYN-ACK, ACK)</td><td>Sem conexão</td></tr>
+<tr><td>Confiabilidade</td><td>Garante entrega, ordem e retransmissão</td><td>Sem garantia</td></tr>
+<tr><td>Controle</td><td>Controle de fluxo (janela deslizante) e de congestionamento</td><td>Nenhum</td></tr>
+<tr><td>Cabeçalho</td><td>20 bytes no mínimo</td><td>8 bytes</td></tr>
+<tr><td>Usos típicos</td><td>HTTP, SMTP, FTP, SSH</td><td>DNS, streaming, VoIP, jogos, DHCP</td></tr>
+</tbody>
+</table></div>
+<p>Para não confundir: <strong>controle de fluxo</strong> protege o receptor (não enviar mais do que ele aguenta); <strong>controle de congestionamento</strong> protege a rede (slow start, janela de congestionamento).</p>
+<h2 id="r-portas">Portas que mais aparecem</h2>
+<div class="tbl"><table>
+<thead><tr><th>Protocolo</th><th>Porta</th><th>Transporte</th></tr></thead>
+<tbody>
+<tr><td>FTP</td><td>20 e 21</td><td>TCP</td></tr>
+<tr><td>SSH</td><td>22</td><td>TCP</td></tr>
+<tr><td>Telnet</td><td>23</td><td>TCP</td></tr>
+<tr><td>SMTP</td><td>25</td><td>TCP</td></tr>
+<tr><td>DNS</td><td>53</td><td>UDP (e TCP)</td></tr>
+<tr><td>DHCP</td><td>67 e 68</td><td>UDP</td></tr>
+<tr><td>HTTP</td><td>80</td><td>TCP</td></tr>
+<tr><td>POP3</td><td>110</td><td>TCP</td></tr>
+<tr><td>IMAP</td><td>143</td><td>TCP</td></tr>
+<tr><td>HTTPS</td><td>443</td><td>TCP</td></tr>
+</tbody>
+</table></div>
+<h2 id="r-ip">Endereçamento IPv4 e sub-redes</h2>
+<p>O prefixo /n diz quantos bits são da rede; sobram 32 − n bits para hosts. Hosts utilizáveis = 2<sup>32 − n</sup> − 2, porque o primeiro endereço é o da rede e o último é o de broadcast.</p>
+<div class="tbl"><table>
+<thead><tr><th>Prefixo</th><th>Máscara</th><th>Endereços no bloco</th><th>Hosts utilizáveis</th></tr></thead>
+<tbody>
+<tr><td>/24</td><td>255.255.255.0</td><td>256</td><td>254</td></tr>
+<tr><td>/25</td><td>255.255.255.128</td><td>128</td><td>126</td></tr>
+<tr><td>/26</td><td>255.255.255.192</td><td>64</td><td>62</td></tr>
+<tr><td>/27</td><td>255.255.255.224</td><td>32</td><td>30</td></tr>
+<tr><td>/28</td><td>255.255.255.240</td><td>16</td><td>14</td></tr>
+<tr><td>/29</td><td>255.255.255.248</td><td>8</td><td>6</td></tr>
+<tr><td>/30</td><td>255.255.255.252</td><td>4</td><td>2</td></tr>
+</tbody>
+</table></div>
+<div class="note"><strong>Exemplo resolvido: a qual sub-rede pertence 192.168.10.77/27?</strong>
+<ol>
+<li>Um /27 tem blocos de 32 endereços: 0, 32, 64, 96...</li>
+<li>77 cai no bloco que começa em 64. Rede: 192.168.10.64.</li>
+<li>Broadcast: 64 + 32 − 1 = 95, ou seja, 192.168.10.95.</li>
+<li>Hosts válidos: de 192.168.10.65 a 192.168.10.94 (30 hosts).</li>
+</ol>
+</div>
+<p>Faixas privadas (RFC 1918): 10.0.0.0/8, 172.16.0.0/12 e 192.168.0.0/16. Para sair para a internet elas passam por <strong>NAT</strong>.</p>
+<h2 id="r-rot">Roteamento</h2>
+<ul>
+<li><strong>Vetor de distância</strong> (RIP, algoritmo de Bellman-Ford): cada roteador troca sua tabela só com os vizinhos; métrica é número de saltos (máximo 15 no RIP); sofre do problema de contagem ao infinito.</li>
+<li><strong>Estado de enlace</strong> (OSPF, algoritmo de Dijkstra): cada roteador conhece a topologia inteira e calcula o caminho mais curto.</li>
+<li><strong>BGP</strong> roteia entre sistemas autônomos (entre provedores); RIP e OSPF roteiam dentro de um sistema autônomo.</li>
+</ul>
+<h2 id="r-enl">Camada de enlace</h2>
+<ul>
+<li>Ethernet usa <strong>CSMA/CD</strong> (detecta colisão); Wi-Fi usa <strong>CSMA/CA</strong> (evita colisão, porque no rádio não dá para detectar).</li>
+<li>Detecção de erros: paridade, checksum e CRC. Código de Hamming também corrige erro de 1 bit.</li>
+<li>Switch aprende em qual porta está cada MAC e monta a tabela de encaminhamento sozinho.</li>
+</ul>
+<h2 id="r-ex">Exercícios</h2>
+<p>Responda de cabeça e só depois abra a resposta.</p>
+<div class="exlist">
+<details class="ex"><summary><span class="n">1</span><span class="q">Quantos hosts cabem numa rede /28?</span><span class="tg">Resposta</span></summary><div class="ans"><b>14.</b> 2<sup>4</sup> − 2 = 14.</div></details>
+<details class="ex"><summary><span class="n">2</span><span class="q">Os hosts 10.0.0.14/29 e 10.0.0.17/29 estão na mesma sub-rede?</span><span class="tg">Resposta</span></summary><div class="ans"><b>Não.</b> Um /29 tem blocos de 8, então 14 está em 10.0.0.8 e 17 está em 10.0.0.16.</div></details>
+<details class="ex"><summary><span class="n">3</span><span class="q">Por que uma chamada de vídeo prefere UDP?</span><span class="tg">Resposta</span></summary><div class="ans">Um pacote atrasado não serve mais; retransmitir só aumentaria o atraso.</div></details>
+<details class="ex"><summary><span class="n">4</span><span class="q">Um quadro chega a um switch com MAC de destino que não está na tabela. O que o switch faz?</span><span class="tg">Resposta</span></summary><div class="ans"><b>Inunda (flooding)</b> o quadro por todas as portas, menos a de origem.</div></details>
+<details class="ex"><summary><span class="n">5</span><span class="q">Em que camada atua um roteador, e qual campo do cabeçalho ele usa para decidir o caminho?</span><span class="tg">Resposta</span></summary><div class="ans"><b>Camada de rede</b>, usando o endereço IP de destino.</div></details>
+</div>
+<div class="btns"><button class="primary" data-start="redes">Fazer simulado de redes</button></div>
+</section>
