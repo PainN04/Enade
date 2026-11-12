@@ -549,6 +549,7 @@ details.allplan[open] summary{margin-bottom:8px}
 #v-praticar.quizon .opt{min-height:42px;padding:10px 12px}
 .qfoot{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .qfoot .sp{flex:1}
+.qfoot #btnNext.primary{order:5}
 @media (max-width:640px){
 #v-praticar.quizon .qcard{padding:18px}
 .opts.two{grid-template-columns:1fr}
@@ -558,7 +559,7 @@ details.allplan[open] summary{margin-bottom:8px}
 .qfoot{position:sticky;bottom:0;z-index:4;background:color-mix(in srgb,var(--paper,var(--sheet)) 92%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);margin-inline:-16px;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .qfoot .sp{display:none}
 .qfoot button{width:100%}
-.qfoot #btnGrade{grid-column:1/-1;order:-1}
+.qfoot .primary,.qfoot #btnNext.primary{grid-column:1/-1;order:-1}
 }
 
 /* v11: telas mais largas no computador */

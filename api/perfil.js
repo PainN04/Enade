@@ -20,12 +20,15 @@ async function save(nome, rec) {
     access: 'private', addRandomSuffix: false, allowOverwrite: true, contentType: 'application/json'
   });
 }
-// Perfis que pediram para recomeçar do zero: o progresso é apagado uma única vez
-// (a senha continua a mesma) e as sessões abertas são encerradas.
-const RECOMECAR = ['paulo'];
+// Perfis que pediram para recomeçar do zero. O número é a vez do pedido: cada vez
+// que ele sobe, o progresso é apagado uma vez (a senha continua a mesma) e as
+// sessões abertas são encerradas.
+const RECOMECAR = { paulo: 2 };
 function recomecar(rec, nome) {
-  if (!rec || rec.recomecou || !RECOMECAR.includes(norm(nome).toLowerCase())) return false;
-  rec.dados = null; rec.tokens = []; rec.recomecou = Date.now();
+  const vez = RECOMECAR[norm(nome).toLowerCase()];
+  const feito = rec ? (rec.recomecouVez || (rec.recomecou ? 1 : 0)) : 0;
+  if (!rec || !vez || feito >= vez) return false;
+  rec.dados = null; rec.tokens = []; rec.recomecou = Date.now(); rec.recomecouVez = vez;
   return true;
 }
 function checkToken(rec, token) {

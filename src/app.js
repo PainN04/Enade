@@ -260,11 +260,11 @@ function updBar(){const n=cur.qs.length,g=$('#btnGrade'),c=$('#btnCancel'),pv=$(
 $$('#qnums button').forEach((b,k)=>{const x=cur.qs[k];b.className=(k===cur.i?'on ':'')+(x.graded?(x.right?'ok':'no'):(x.pick!==null?'done':''));b.disabled=cur.mode==='treino'&&!x.graded&&k!==cur.qs.findIndex(y=>!y.graded);b.setAttribute('aria-current',k===cur.i?'true':'false')});
 if(cur.mode==='treino'){const ok=cur.qs.filter(x=>x.right).length,last=cur.qs.findIndex(x=>!x.graded);
 $('#progTxt').textContent=ok+(ok===1?' acerto':' acertos');
-pv.hidden=cur.i===0;nx.hidden=true;
+pv.hidden=cur.i===0;nx.hidden=true;g.className='primary';
 g.textContent=it.graded?(last<0?'Ver resultado':(last===cur.i+1?'Próxima':'Ir para a questão '+(last+1))):(it.pick===null?'Não sei, ver resposta':'Responder');c.textContent='Encerrar'}
 else{const a=cur.qs.filter(x=>x.pick!==null).length;$('#progTxt').textContent=a+' de '+n+' respondidas';
-pv.hidden=cur.i===0;nx.hidden=cur.i===n-1;
-g.textContent=a<n?'Corrigir ('+(n-a)+' em branco)':'Corrigir';c.textContent='Cancelar'}}
+pv.hidden=cur.i===0;const last=cur.i===n-1;nx.hidden=last;nx.className=last?'ghost':'primary';g.className=last||a===n?'primary':'ghost';
+g.textContent=a<n?'Corrigir ('+(n-a)+(n-a===1?' vazia)':' vazias)'):'Corrigir';c.textContent='Cancelar'}}
 function gradeCard(k){const it=cur.qs[k],q=it.q,card=document.getElementById('q'+k);it.graded=true;it.right=it.pick===q.a;
 card.classList.add('graded');card.querySelectorAll('input').forEach(i=>i.disabled=true);
 card.querySelectorAll('.opt').forEach(l=>{const oi=+l.dataset.oi;if(oi===q.a)l.classList.add('right');else if(oi===it.pick)l.classList.add('wrong')});
@@ -280,7 +280,7 @@ card.querySelector('.fbslot').innerHTML='<div class="fb '+(r?'ok':'no')+'">'+
 (!r?'<p class="fbtip">Esta questão foi guardada em "Refazer meus erros".</p>':'')+rev+'</div>';
 record(q,r)}
 function mainAction(){if(!cur||cur.done)return;
-if(cur.mode==='prova'){finish();return}
+if(cur.mode==='prova'){const nb=cur.qs.filter(x=>x.pick===null).length;if(nb&&!confirm(nb===cur.qs.length?'Você ainda não respondeu nenhuma questão. Corrigir assim mesmo? Todas vão contar como erro.':'Ainda há '+nb+(nb===1?' questão em branco':' questões em branco')+'. Corrigir assim mesmo? Questão em branco conta como erro.')){const k=cur.qs.findIndex(x=>x.pick===null);if(k>=0)goQ(k);return}finish();return}
 const it=cur.qs[cur.i];
 if(!it.graded){gradeCard(cur.i);save();updBar();const fb=document.querySelector('#q'+cur.i+' .fbslot'),b=$('#bar').getBoundingClientRect();if(fb&&getComputedStyle($('#bar')).position==='sticky'){if(fb.getBoundingClientRect().top>b.top-140)fb.scrollIntoView({block:'start',behavior:'smooth'})}else if(fb&&b.bottom>innerHeight){const ft=fb.getBoundingClientRect().top;if(b.bottom-ft<innerHeight-90)window.scrollBy({top:b.bottom-innerHeight+16,behavior:'smooth'});else fb.scrollIntoView({block:'start',behavior:'smooth'})};return}
 const last=cur.qs.findIndex(x=>!x.graded);
