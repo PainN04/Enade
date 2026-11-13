@@ -655,3 +655,5 @@ section.view:not([hidden]){animation:rise 260ms var(--ease) backwards}
 .qfig{margin:14px 0;color:var(--ink);overflow-x:auto}.qfig svg{width:100%;max-width:560px;height:auto;display:block;margin:0 auto}.qfign{font-size:.85em;opacity:.75;margin:-6px 0 10px}
 .qfig.wide svg{min-width:540px}@media(max-width:600px){.qfig.wide::after{content:"← deslize para ver a figura inteira →";display:block;text-align:center;font-size:.75em;opacity:.6}}
 .qtab{border-collapse:collapse;margin:6px 0}.qtab th,.qtab td{border:1px solid var(--line);padding:6px 12px;text-align:center}.qtab th{font-weight:600}
+
+@media(max-width:600px){.qtab th,.qtab td{padding:5px 7px;font-size:.88em}}
